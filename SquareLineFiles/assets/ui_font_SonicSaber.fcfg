@@ -1,0 +1,16 @@
+{
+  "codename": "SonicSaber",
+  "ttf_path": "/assets/SonicSaberPersonalUse-Regular.ttf",
+  "bin_path": "/assets\\ui_font_SonicSaber.bin",
+  "c_path": "/assets\\ui_font_SonicSaber.c",
+  "cfg_path": "/assets\\ui_font_SonicSaber.fcfg",
+  "size": 28,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}
