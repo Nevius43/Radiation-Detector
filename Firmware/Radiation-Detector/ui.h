@@ -44,9 +44,55 @@ extern lv_obj_t * ui_Screen2;
 extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui_Container3;
 extern lv_obj_t * ui_Button4;
+void ui_event_Button5(lv_event_t * e);
 extern lv_obj_t * ui_Button5;
+void ui_event_Button6(lv_event_t * e);
 extern lv_obj_t * ui_Button6;
+void ui_event_Button7(lv_event_t * e);
 extern lv_obj_t * ui_Button7;
+// CUSTOM VARIABLES
+
+// SCREEN: ui_Screen3
+void ui_Screen3_screen_init(void);
+extern lv_obj_t * ui_Screen3;
+extern lv_obj_t * ui_Panel2;
+extern lv_obj_t * ui_Container1;
+void ui_event_Button8(lv_event_t * e);
+extern lv_obj_t * ui_Button8;
+extern lv_obj_t * ui_Button9;
+void ui_event_Button10(lv_event_t * e);
+extern lv_obj_t * ui_Button10;
+void ui_event_Button11(lv_event_t * e);
+extern lv_obj_t * ui_Button11;
+extern lv_obj_t * ui_Chart2;
+// CUSTOM VARIABLES
+
+// SCREEN: ui_Screen4
+void ui_Screen4_screen_init(void);
+extern lv_obj_t * ui_Screen4;
+extern lv_obj_t * ui_Panel3;
+extern lv_obj_t * ui_Container2;
+void ui_event_Button12(lv_event_t * e);
+extern lv_obj_t * ui_Button12;
+void ui_event_Button13(lv_event_t * e);
+extern lv_obj_t * ui_Button13;
+extern lv_obj_t * ui_Button14;
+void ui_event_Button15(lv_event_t * e);
+extern lv_obj_t * ui_Button15;
+// CUSTOM VARIABLES
+
+// SCREEN: ui_Screen5
+void ui_Screen5_screen_init(void);
+extern lv_obj_t * ui_Screen5;
+extern lv_obj_t * ui_Panel4;
+extern lv_obj_t * ui_Container4;
+void ui_event_Button16(lv_event_t * e);
+extern lv_obj_t * ui_Button16;
+void ui_event_Button17(lv_event_t * e);
+extern lv_obj_t * ui_Button17;
+void ui_event_Button18(lv_event_t * e);
+extern lv_obj_t * ui_Button18;
+extern lv_obj_t * ui_Button19;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -56,10 +102,10 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_176188083);    // assets/GMtube (100 x 100 px) (4).png
 LV_IMG_DECLARE(ui_img_383071526);    // assets/SurfaceBarrier (2).png
-LV_IMG_DECLARE(ui_img_85097194);    // assets/gear (1) (1).png
+LV_IMG_DECLARE(ui_img_1719020684);    // assets/radiation (1).png
 LV_IMG_DECLARE(ui_img_220545925);    // assets/bar-chart (1).png
 LV_IMG_DECLARE(ui_img_1666199263);    // assets/lightning (1).png
-LV_IMG_DECLARE(ui_img_290762343);    // assets/switch (1).png
+LV_IMG_DECLARE(ui_img_85097194);    // assets/gear (1) (1).png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_SonicSaber);
