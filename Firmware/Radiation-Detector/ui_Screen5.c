@@ -79,8 +79,36 @@ void ui_Screen5_screen_init(void)
     lv_obj_set_style_bg_opa(ui_Button19, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_img_src(ui_Button19, &ui_img_85097194, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_Keyboard2 = lv_keyboard_create(ui_Screen5);
+    lv_obj_set_width(ui_Keyboard2, 480);
+    lv_obj_set_height(ui_Keyboard2, 130);
+    lv_obj_set_align(ui_Keyboard2, LV_ALIGN_BOTTOM_MID);
+
+    ui_TextArea2 = lv_textarea_create(ui_Screen5);
+    lv_obj_set_width(ui_TextArea2, 150);
+    lv_obj_set_height(ui_TextArea2, 43);
+    lv_obj_set_x(ui_TextArea2, -152);
+    lv_obj_set_y(ui_TextArea2, -72);
+    lv_obj_set_align(ui_TextArea2, LV_ALIGN_CENTER);
+    lv_textarea_set_placeholder_text(ui_TextArea2, "SSID");
+
+
+
+    ui_TextArea1 = lv_textarea_create(ui_Screen5);
+    lv_obj_set_width(ui_TextArea1, 150);
+    lv_obj_set_height(ui_TextArea1, 43);
+    lv_obj_set_x(ui_TextArea1, -153);
+    lv_obj_set_y(ui_TextArea1, -12);
+    lv_obj_set_align(ui_TextArea1, LV_ALIGN_CENTER);
+    lv_textarea_set_placeholder_text(ui_TextArea1, "Password");
+    lv_textarea_set_password_mode(ui_TextArea1, true);
+
+
+
     lv_obj_add_event_cb(ui_Button16, ui_event_Button16, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button17, ui_event_Button17, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button18, ui_event_Button18, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_TextArea1, ui_event_TextArea1, LV_EVENT_ALL, NULL);
 
 }
