@@ -48,7 +48,7 @@ Estos detectores necesitan un voltaje de polarización **estable** de aproximada
 ---
 
 ## 3. Detector de barrera de silicio
-Los **detectores de barrera de silicio** son la opción más **cara** y menos accesible, por lo que no se usan en proyectos caseros, por lo que no hay mucha información sobre los circuitos de acondicionamiento y hay que buscar en fuentes mas técnicas. 
+Los **detectores de barrera de silicio** son la opción más **cara** y menos accesible, por lo que no se usan en proyectos caseros y no hay mucha información sobre los circuitos de acondicionamiento, hay que buscar en fuentes mas técnicas. 
 - Necesitan un voltaje de alrededor de **50 V**.
 
 ---
