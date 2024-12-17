@@ -37,7 +37,7 @@ Se usaría un tubo con **ventana de mica** que permita la detección de partícu
 El **centelleador** junto con un **fotomultiplicador de silicio** es una opción moderna y bastante usada ultimamente en proyectos caseros. Los componentes se pueden adquirir **nuevos** y a un precio razonable.
 
 - **Fotomultiplicador de silicio recomendado**: [MICROFC-30035-SMT-TR](https://www.mouser.es/ProductDetail/onsemi/MICROFC-30035-SMT-TR?qs=byeeYqUIh0Mh9KJVNOFZEA%3D%3D&mgh=1&vip=1&gad_source=1)
-- **Cristal centelleador**: Tiene que ser compatible con el tamaño del fotomultiplicador (se recomienda buscar en eBay o similares).
+- **Cristal centelleador**: Tiene que ser compatible con el tamaño del fotomultiplicador (se comparía en eBay o similares).
 
 Estos detectores necesitan un voltaje de polarización **estable** de aproximadamente **28 V**. El siguiente esquema muestra un circuito de polarización y detección con un ESP32, la variación de temperatura está compensada mediante una **NTC**:
 
