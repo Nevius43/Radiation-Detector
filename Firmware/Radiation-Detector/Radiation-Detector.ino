@@ -74,8 +74,8 @@ void my_touchpad_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
     }
 }
 
-/* LVGL tick task */
-void lv_tick_task(void *arg) {
+/* LVGL tick task with corrected signature */
+void lv_tick_task(TimerHandle_t xTimer) {
     lv_tick_inc(1);
 }
 
@@ -136,9 +136,24 @@ void setup() {
     ui_init();
 
     // Create a FreeRTOS timer for LVGL ticks
-    lv_tick_timer = xTimerCreate("LV_Tick", pdMS_TO_TICKS(1), pdTRUE, NULL, lv_tick_task);
+    lv_tick_timer = xTimerCreate(
+        "LV_Tick",                     // Timer name
+        pdMS_TO_TICKS(1),             // Timer period (1 ms)
+        pdTRUE,                        // Auto-reload
+        NULL,                          // Timer ID
+        lv_tick_task                   // Callback function
+    );
+
     if (lv_tick_timer != NULL) {
-        xTimerStart(lv_tick_timer, 0);
+        if (xTimerStart(lv_tick_timer, 0) != pdPASS) {
+            #if ENABLE_DEBUG_LOGS
+            Serial.println("Failed to start LVGL tick timer.");
+            #endif
+        }
+    } else {
+        #if ENABLE_DEBUG_LOGS
+        Serial.println("Failed to create LVGL tick timer.");
+        #endif
     }
 
     #if ENABLE_DEBUG_LOGS
@@ -154,23 +169,23 @@ void setup() {
                 vTaskDelay(pdMS_TO_TICKS(1)); // Yield to other tasks
             }
         },
-        "LVGL_Task",
-        4096,
-        NULL,
-        2, // Higher priority
-        NULL,
-        0 // Core 0
+        "LVGL_Task",        // Task name
+        4096,               // Stack size (in words)
+        NULL,               // Task input parameter
+        2,                  // Task priority
+        NULL,               // Task handle
+        0                   // Core 0
     );
 
     // Create memory monitor task on core 1 with low priority
     xTaskCreatePinnedToCore(
         memory_monitor_task,
-        "Memory_Monitor",
-        2048,
-        NULL,
-        0, // Low priority
-        NULL,
-        1 // Core 1
+        "Memory_Monitor",   // Task name
+        2048,               // Stack size (in words)
+        NULL,               // Task input parameter
+        0,                  // Task priority
+        NULL,               // Task handle
+        1                   // Core 1
     );
 }
 
