@@ -56,6 +56,24 @@ extern lv_obj_t * ui_Label18;
 extern lv_obj_t * ui_Label19;
 extern lv_obj_t * ui_Button37;
 extern lv_obj_t * ui_Label14;
+extern lv_obj_t * ui_Panel5;
+extern lv_obj_t * ui_Panel1;
+extern lv_obj_t * ui_Panel6;
+extern lv_obj_t * ui_Panel7;
+extern lv_obj_t * ui_Panel8;
+extern lv_obj_t * ui_Label29;
+extern lv_obj_t * ui_Label30;
+extern lv_obj_t * ui_Label31;
+extern lv_obj_t * ui_Label32;
+extern lv_obj_t * ui_Label33;
+extern lv_obj_t * ui_Label34;
+extern lv_obj_t * ui_Label35;
+extern lv_obj_t * ui_Label36;
+extern lv_obj_t * ui_Label37;
+extern lv_obj_t * ui_Panel9;
+extern lv_obj_t * ui_Label27;
+extern lv_obj_t * ui_Panel10;
+extern lv_obj_t * ui_Label38;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Screen3
@@ -178,7 +196,6 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_176188083);    // assets/GMtube (100 x 100 px) (4).png
 LV_IMG_DECLARE(ui_img_383071526);    // assets/SurfaceBarrier (2).png
-LV_IMG_DECLARE(ui_img_background_png);    // assets/Background.png
 LV_IMG_DECLARE(ui_img_1719020684);    // assets/radiation (1).png
 LV_IMG_DECLARE(ui_img_220545925);    // assets/bar-chart (1).png
 LV_IMG_DECLARE(ui_img_1666199263);    // assets/lightning (1).png
@@ -186,10 +203,10 @@ LV_IMG_DECLARE(ui_img_85097194);    // assets/gear (1) (1).png
 LV_IMG_DECLARE(ui_img_584212719);    // assets/reiniciar (1).png
 
 // FONTS
-LV_FONT_DECLARE(ui_font_SonicSaber);
 LV_FONT_DECLARE(ui_font_Pixel);
-LV_FONT_DECLARE(ui_font_Pixel_60);
 LV_FONT_DECLARE(ui_font_Pixel_20);
+LV_FONT_DECLARE(ui_font_Pixel_60);
+LV_FONT_DECLARE(ui_font_SonicSaber);
 
 // UI INIT
 void ui_init(void);

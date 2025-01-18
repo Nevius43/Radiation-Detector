@@ -41,6 +41,24 @@ lv_obj_t * ui_Label18;
 lv_obj_t * ui_Label19;
 lv_obj_t * ui_Button37;
 lv_obj_t * ui_Label14;
+lv_obj_t * ui_Panel5;
+lv_obj_t * ui_Panel1;
+lv_obj_t * ui_Panel6;
+lv_obj_t * ui_Panel7;
+lv_obj_t * ui_Panel8;
+lv_obj_t * ui_Label29;
+lv_obj_t * ui_Label30;
+lv_obj_t * ui_Label31;
+lv_obj_t * ui_Label32;
+lv_obj_t * ui_Label33;
+lv_obj_t * ui_Label34;
+lv_obj_t * ui_Label35;
+lv_obj_t * ui_Label36;
+lv_obj_t * ui_Label37;
+lv_obj_t * ui_Panel9;
+lv_obj_t * ui_Label27;
+lv_obj_t * ui_Panel10;
+lv_obj_t * ui_Label38;
 // CUSTOM VARIABLES
 
 
