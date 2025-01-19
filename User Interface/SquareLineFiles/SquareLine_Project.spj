@@ -8054,7 +8054,7 @@
               {
                 "nid": 1240,
                 "strtype": "CHART/ChartData",
-                "strval": "[{\"Axis\":0,\"Color\":[137,222,16,255],\"Series\":[4,5,6,5,4,3,56,7,5,4,6,3,5,6,7,8,6,7,4,3]}]",
+                "strval": "[{\"Axis\":0,\"Color\":[137,222,16,255],\"Series\":[]}]",
                 "InheritedType": 12
               },
               {
@@ -14750,7 +14750,7 @@
               {
                 "nid": 1240,
                 "strtype": "CHART/ChartData",
-                "strval": "[{\"Axis\":0,\"Color\":[224,200,16,255],\"Series\":[1,2,34,65,3,2,5,7,4,32,2,56,4,3,2,3,4,4,3,2,5,6,7,6]}]",
+                "strval": "[{\"Axis\":0,\"Color\":[224,200,16,255],\"Series\":[]}]",
                 "InheritedType": 12
               },
               {
@@ -17318,10 +17318,10 @@
     "theme_dark": true,
     "theme_color1": 5,
     "theme_color2": 0,
-    "uiExportFolderPath": "C:\\Users\\Nevius\\Documents\\GitHub\\Radiation-Detector\\Firmware\\Radiation-Detector\\UI",
+    "uiExportFolderPath": "C:\\Users\\pablo\\OneDrive\\Documentos\\GitHub\\Radiation-Detector\\Firmware\\Radiation-Detector\\UI",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 7,
+    "backup_cnt": 8,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
