@@ -108,14 +108,14 @@ void ui_Screen4_screen_init(void)
     lv_obj_set_align(ui_Label21, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label21, "Target Voltage");
 
-    ui_Label22 = lv_label_create(ui_Screen4);
-    lv_obj_set_width(ui_Label22, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label22, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label22, -115);
-    lv_obj_set_y(ui_Label22, -39);
-    lv_obj_set_align(ui_Label22, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label22, "399.98 V");
-    lv_obj_set_style_text_font(ui_Label22, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_CurrentVoltage = lv_label_create(ui_Screen4);
+    lv_obj_set_width(ui_CurrentVoltage, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_CurrentVoltage, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_CurrentVoltage, -115);
+    lv_obj_set_y(ui_CurrentVoltage, -39);
+    lv_obj_set_align(ui_CurrentVoltage, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CurrentVoltage, "399.98 V");
+    lv_obj_set_style_text_font(ui_CurrentVoltage, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button39 = lv_btn_create(ui_Screen4);
     lv_obj_set_width(ui_Button39, 50);
@@ -153,14 +153,14 @@ void ui_Screen4_screen_init(void)
     lv_label_set_text(ui_Label25, "-");
     lv_obj_set_style_text_font(ui_Label25, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label23 = lv_label_create(ui_Screen4);
-    lv_obj_set_width(ui_Label23, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label23, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label23, 132);
-    lv_obj_set_y(ui_Label23, -39);
-    lv_obj_set_align(ui_Label23, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label23, "400.00 V");
-    lv_obj_set_style_text_font(ui_Label23, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_TargetVoltage = lv_label_create(ui_Screen4);
+    lv_obj_set_width(ui_TargetVoltage, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_TargetVoltage, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_TargetVoltage, 132);
+    lv_obj_set_y(ui_TargetVoltage, -39);
+    lv_obj_set_align(ui_TargetVoltage, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_TargetVoltage, "400.00 V");
+    lv_obj_set_style_text_font(ui_TargetVoltage, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button40 = lv_btn_create(ui_Screen4);
     lv_obj_set_width(ui_Button40, 100);

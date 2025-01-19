@@ -2139,7 +2139,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label15",
+                "strval": "AverageRad",
                 "InheritedType": 10
               },
               {
@@ -2290,7 +2290,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label16",
+                "strval": "CumulativeRad",
                 "InheritedType": 10
               },
               {
@@ -2441,7 +2441,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label17",
+                "strval": "MaximumRad",
                 "InheritedType": 10
               },
               {
@@ -2592,7 +2592,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label18",
+                "strval": "CumulativeAlarm",
                 "InheritedType": 10
               },
               {
@@ -2743,7 +2743,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label19",
+                "strval": "CurrentAlarm",
                 "InheritedType": 10
               },
               {
@@ -3034,7 +3034,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label14",
+                "strval": "CurrentRad",
                 "InheritedType": 10
               },
               {
@@ -9649,7 +9649,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label22",
+                "strval": "CurrentVoltage",
                 "InheritedType": 10
               },
               {
@@ -10330,7 +10330,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Label23",
+                "strval": "TargetVoltage",
                 "InheritedType": 10
               },
               {
