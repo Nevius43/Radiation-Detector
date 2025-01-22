@@ -3,8 +3,8 @@
  ******************************************************************************/
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-#include "ui.h"   // Must declare/extern lv_obj_t *ui_Chart1, ui_Chart3, labels, etc.
-#include <vector> // For storing timestamps of button presses
+#include "ui.h"  // Must declare/extern: ui_Chart1, ui_Chart3, ui_CurrentRad, etc.
+#include <vector>
 
 /*******************************************************************************
  * Definitions & Constants
@@ -16,21 +16,24 @@ static const uint16_t SCREEN_HEIGHT = 320;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[ SCREEN_WIDTH * SCREEN_HEIGHT / 10 ];
 
-/* Pins */
-static const uint8_t BUTTON_PIN = 37;
-static const uint8_t BUZZER_PIN = 38;
+/* Schmitt trigger digital output pin */
+static const uint8_t GEIGER_PULSE_PIN = 9;
 
-/* Conversion factor for CPM → µSv/h. Adjust for your tube or simulation. */
-static const float CONVERSION_FACTOR = 1.0f; //Conversion factor currently 1 for testing, depends of the tube, the idea is that it can be set up via the settings tab
+/* Buzzer pin and beep settings */
+static const uint8_t BUZZER_PIN       = 38;
+static const unsigned int BEEP_FREQ   = 40;  // 40 Hz is typically inaudible
+static const unsigned long BEEP_MS    = 50;  // beep duration (ms)
 
-/* Rolling list of timestamps (1-minute window) */
+/* Conversion factor for CPM -> µSv/h */
+static const float CONVERSION_FACTOR = 153.8f;
+
+/* Rolling 1-minute list of pulse timestamps */
 static std::vector<unsigned long> events;
 
-/* Lifetime counts & timing */
-static unsigned long totalCounts = 0;  // all-time button presses
-static unsigned long startTime   = 0;  // for average calculations
-static unsigned long lastLoop    = 0;  // for dose integration
-static bool LastButtonState      = HIGH;
+/* All-time counts & timing */
+static unsigned long totalCounts = 0;   
+static unsigned long startTime   = 0;   
+static unsigned long lastLoop    = 0;   
 
 /* Real-time variables for label display */
 static float currentuSvHr      = 0.0f;
@@ -40,33 +43,27 @@ static float cumulativeDosemSv = 0.0f;
 
 /*******************************************************************************
  * Chart Configuration
- *  - ui_Chart1 has 20 bars => each bar = 3 min => total 60 min
- *  - ui_Chart3 has 24 bars => each bar = 1 hour => total 24 hours
+ *  - ui_Chart1: 20 bars -> 3 min each -> 60 min total
+ *  - ui_Chart3: 24 bars -> 1 hour each -> 24 hours total
  ******************************************************************************/
 static const int CHART1_SEGMENTS    = 20;
-static const int CHART1_SEGMENT_MIN = 3;   // 3 minutes per bar => 60 min total
+static const int CHART1_SEGMENT_MIN = 3;   // 3-minute segments
 
 static const int CHART3_SEGMENTS    = 24;
-static const int CHART3_SEGMENT_HR  = 1;   // 1 hour per bar => 24 hours total
+static const int CHART3_SEGMENT_HR  = 1;   // 1-hour segments
 
-/* Data arrays for each chart (storing the final bar values) */
+/* Arrays for final bar values */
 static float chart1Data[CHART1_SEGMENTS] = {0.0f};
 static float chart3Data[CHART3_SEGMENTS] = {0.0f};
 
-/* Partial sums to build each bar in real time */
-static float partialSum3Min = 0.0f;   // accumulates partial data for Chart1
-static int   minuteCount3   = 0;      // how many minutes have passed in the 3-min segment
+/* Partial sums for building each bar segment */
+static float partialSum3Min = 0.0f;
+static int   minuteCount3   = 0;
 
-static float partialSum60Min = 0.0f;  // accumulates partial data for Chart3
-static int   hourCount       = 0;     // how many minutes have passed in the 1-hour segment
+static float partialSum60Min = 0.0f;
+static int   hourCount       = 0;
 
-/* We shift data left once the segment completes. So the "last bar" is always
- * chartXData[CHARTX_SEGMENTS - 1]. */
- 
-/*******************************************************************************
- * LVGL Objects (from ui.h / SquareLine)
- *  - Already defined as bar charts with correct point counts
- ******************************************************************************/
+/* LVGL Objects (from your UI) */
 extern lv_obj_t* ui_CurrentRad;
 extern lv_obj_t* ui_AverageRad;
 extern lv_obj_t* ui_MaximumRad;
@@ -74,9 +71,16 @@ extern lv_obj_t* ui_CumulativeRad;
 extern lv_obj_t* ui_Chart1;
 extern lv_obj_t* ui_Chart3;
 
-/* We'll get the chart series after ui_init() */
+/* Single data series per chart */
 static lv_chart_series_t* chart1Series = nullptr;
 static lv_chart_series_t* chart3Series = nullptr;
+
+/*******************************************************************************
+ * Interrupt-Related Variables
+ ******************************************************************************/
+static volatile bool newPulseFlag = false;         // set by ISR, cleared in loop
+static volatile unsigned long lastInterruptMs = 0; // optional lockout
+static const unsigned long PULSE_LOCKOUT_MS  = 5;  // ignore pulses within 5ms
 
 /*******************************************************************************
  * Function Prototypes
@@ -84,11 +88,14 @@ static lv_chart_series_t* chart3Series = nullptr;
 void initSerial();
 void initTFT();
 void initLVGL();
-void assignChartSeries(); // retrieve the single series from ui_Chart1 & ui_Chart3
-void initButton();
-void initBuzzer();
+void assignChartSeries();
 
-void handleButton();
+void initPulsePin();
+void IRAM_ATTR geigerPulseISR(); // the ISR
+
+void initBuzzer();
+void handleNewPulses();  // main-loop logic that processes ISR pulses
+
 void removeOldEvents();
 float getRealTimeCPM();
 void updateRealTimeStats(float cpm, float dtSec);
@@ -108,12 +115,12 @@ void setup()
 {
     initSerial();
     initTFT();
-    initLVGL();       // calls ui_init() inside
-    assignChartSeries();
-    initButton();
+    initLVGL();          
+    assignChartSeries(); 
+
+    initPulsePin();
     initBuzzer();
 
-    // Initialize timers
     startTime = millis();
     lastLoop  = startTime;
 
@@ -128,32 +135,32 @@ void loop()
     // 1) LVGL tasks
     lv_timer_handler();
 
-    // 2) Button logic (falling edges + beep)
-    handleButton();
+    // 2) Check if ISR flagged new pulses
+    handleNewPulses();
 
-    // 3) Maintain 1-min rolling timestamps for CPM
+    // 3) Remove old events from 1-min window
     removeOldEvents();
 
-    // 4) dtSec for dose integration
+    // 4) Time step for dose integration
     unsigned long now = millis();
     float dtSec = (float)(now - lastLoop) / 1000.0f;
     lastLoop = now;
 
-    // 5) Compute real-time CPM and update stats
+    // 5) Real-time CPM from events => dose stats
     float cpm = getRealTimeCPM();
     updateRealTimeStats(cpm, dtSec);
 
     // 6) Update numeric labels
     updateLabels();
 
-    // 7) Update chart data once per minute
+    // 7) Charts once per minute
     updateChartsEveryMinute();
 
-    // 8) Continuously update the "last bar" in real time
-    updateChart1RealTime(); 
+    // 8) Update last bar in real time
+    updateChart1RealTime();
     updateChart3RealTime();
 
-    // Optional small delay
+    // optional delay
     // delay(5);
 }
 
@@ -161,68 +168,58 @@ void loop()
  * Implementation - Initialization
  ******************************************************************************/
 
-/**
- * @brief Initialize Serial
- */
 void initSerial()
 {
     Serial.begin(115200);
     Serial.println("Initializing Serial...");
 }
 
-/**
- * @brief Initialize TFT if needed (optional if your code already handles it)
- */
 void initTFT()
 {
     static TFT_eSPI tft(SCREEN_WIDTH, SCREEN_HEIGHT);
     tft.begin();
     tft.setRotation(1);
 
+    // Example calibration
     uint16_t calData[5] = {267, 3646, 198, 3669, 6};
     tft.setTouch(calData);
 
     Serial.println("TFT initialized.");
 }
 
-/**
- * @brief Initialize LVGL and create UI (ui_init()).
- *        We'll retrieve chart series afterwards in assignChartSeries().
- */
 void initLVGL()
 {
     lv_init();
-
     lv_disp_draw_buf_init(&draw_buf, buf, NULL, SCREEN_WIDTH * SCREEN_HEIGHT / 10);
 
-    // Display driver
+    // Minimal flush callback
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.hor_res = SCREEN_WIDTH;
     disp_drv.ver_res = SCREEN_HEIGHT;
     disp_drv.flush_cb = [](lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
     {
-        static TFT_eSPI tftTemp(SCREEN_WIDTH, SCREEN_HEIGHT);
+        static TFT_eSPI tftDisp(SCREEN_WIDTH, SCREEN_HEIGHT);
         static bool initted = false;
         if(!initted){
-            tftTemp.begin();
-            tftTemp.setRotation(1);
+            tftDisp.begin();
+            tftDisp.setRotation(1);
             initted = true;
         }
         uint32_t w = (area->x2 - area->x1 + 1);
         uint32_t h = (area->y2 - area->y1 + 1);
 
-        tftTemp.startWrite();
-        tftTemp.setAddrWindow(area->x1, area->y1, w, h);
-        tftTemp.pushColors((uint16_t *)&color_p->full, w * h, true);
-        tftTemp.endWrite();
+        tftDisp.startWrite();
+        tftDisp.setAddrWindow(area->x1, area->y1, w, h);
+        tftDisp.pushColors((uint16_t *)&color_p->full, w * h, true);
+        tftDisp.endWrite();
 
         lv_disp_flush_ready(drv);
     };
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register(&disp_drv);
 
-    // Input driver (touch) - optional
+    // (Optional) Simple touch driver
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -249,60 +246,69 @@ void initLVGL()
     };
     lv_indev_drv_register(&indev_drv);
 
-    // Create all UI elements, including ui_Chart1 and ui_Chart3
+    // Create UI
     ui_init();
 
     Serial.println("LVGL initialized + UI created.");
 }
 
-/**
- * @brief Fetch the single series from ui_Chart1 and ui_Chart3
- */
 void assignChartSeries()
 {
-    // We assume each chart has exactly one series, created in ui.c
     chart1Series = lv_chart_get_series_next(ui_Chart1, NULL);
     chart3Series = lv_chart_get_series_next(ui_Chart3, NULL);
 
-    if(!chart1Series) {
+    if(!chart1Series){
         Serial.println("Warning: ui_Chart1 has no series!");
     }
-    if(!chart3Series) {
+    if(!chart3Series){
         Serial.println("Warning: ui_Chart3 has no series!");
     }
 
-    // (Optionally ensure the point count is correct for each chart, e.g. 20, 24)
-    // lv_chart_set_point_count(ui_Chart1, CHART1_SEGMENTS);
-    // lv_chart_set_point_count(ui_Chart3, CHART3_SEGMENTS);
-
-    // Initialize the data in both charts to zero
-    for(int i=0; i<CHART1_SEGMENTS; i++)
-    {
+    // Initialize chart data to zero
+    for(int i=0; i<CHART1_SEGMENTS; i++){
         lv_chart_set_value_by_id(ui_Chart1, chart1Series, i, 0);
     }
-    for(int i=0; i<CHART3_SEGMENTS; i++)
-    {
+    lv_chart_refresh(ui_Chart1);
+
+    for(int i=0; i<CHART3_SEGMENTS; i++){
         lv_chart_set_value_by_id(ui_Chart3, chart3Series, i, 0);
     }
-    lv_chart_refresh(ui_Chart1);
     lv_chart_refresh(ui_Chart3);
 
     Serial.println("Chart series assigned.");
 }
 
+/*******************************************************************************
+ * ISR-based Pulse Detection
+ ******************************************************************************/
+
 /**
- * @brief Initialize a button pin with pull-up
+ * @brief Configure the digital pin and attach rising-edge interrupt.
  */
-void initButton()
+void initPulsePin()
 {
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
-    LastButtonState = digitalRead(BUTTON_PIN);
-    Serial.println("Button initialized (INPUT_PULLUP).");
+    pinMode(GEIGER_PULSE_PIN, INPUT); // or INPUT_PULLDOWN if your hardware uses internal pull-down
+    attachInterrupt(digitalPinToInterrupt(GEIGER_PULSE_PIN), geigerPulseISR, RISING);
+    Serial.println("Geiger pulse pin set for interrupt on RISING edge.");
 }
 
 /**
- * @brief Initialize the buzzer
+ * @brief The ISR for geiger pulses.
+ *        We only set a flag (and possibly a brief lockout) to avoid double counting.
  */
+void IRAM_ATTR geigerPulseISR()
+{
+    unsigned long nowMs = millis();
+    if(nowMs - lastInterruptMs > PULSE_LOCKOUT_MS)
+    {
+        newPulseFlag = true;
+        lastInterruptMs = nowMs;
+    }
+}
+
+/*******************************************************************************
+ * Buzzer
+ ******************************************************************************/
 void initBuzzer()
 {
     pinMode(BUZZER_PIN, OUTPUT);
@@ -311,30 +317,36 @@ void initBuzzer()
 }
 
 /*******************************************************************************
- * Implementation - Button & CPM
+ * Main-Loop Handling of New Pulses
  ******************************************************************************/
 
 /**
- * @brief Detect falling edge. Each press => beep at 40 Hz, record event.
+ * @brief If the ISR indicated new pulses, we record them in 'events' and beep.
+ *        Because we can't safely call tone() in the ISR, we do it here.
  */
-void handleButton()
+void handleNewPulses()
 {
-    bool currentState = digitalRead(BUTTON_PIN);
-    if(LastButtonState == HIGH && currentState == LOW)
+    if(newPulseFlag)
     {
-        // New event
-        events.push_back(millis());
-        // All-time count
+        // Clear the flag first to handle multiple pulses
+        newPulseFlag = false;
+
+        // Record the event
+        unsigned long now = millis();
+        events.push_back(now);
         totalCounts++;
 
-        // 40 Hz beep for 50 ms
-        tone(BUZZER_PIN, 40, 50);
+        // Buzzer beep
+        tone(BUZZER_PIN, BEEP_FREQ, BEEP_MS);
     }
-    LastButtonState = currentState;
 }
 
+/*******************************************************************************
+ * Implementation - Rolling CPM & Stats
+ ******************************************************************************/
+
 /**
- * @brief Remove events older than 60 seconds
+ * @brief Remove pulses older than 60,000 ms to maintain 1-min window
  */
 void removeOldEvents()
 {
@@ -346,28 +358,24 @@ void removeOldEvents()
 }
 
 /**
- * @brief Real-time CPM = number of events in the last 60 seconds
+ * @brief Return how many pulses in the last 60 seconds
  */
 float getRealTimeCPM()
 {
     return (float)events.size();
 }
 
-/*******************************************************************************
- * Implementation - Stats & Labels
- ******************************************************************************/
-
 /**
- * @brief Update current, average, max, cumulative dose
- * @param cpm   real-time counts per minute
- * @param dtSec time since last loop, seconds
+ * @brief Compute current, average, max, cumulative dose
+ * @param cpm   counts per minute from getRealTimeCPM()
+ * @param dtSec time since last loop
  */
 void updateRealTimeStats(float cpm, float dtSec)
 {
     // 1) Current reading
     currentuSvHr = cpm / CONVERSION_FACTOR;
 
-    // 2) Average reading
+    // 2) Average
     unsigned long now = millis();
     float totalTimeMin = (float)(now - startTime) / 60000.0f;
     if(totalTimeMin > 0.0f)
@@ -376,19 +384,24 @@ void updateRealTimeStats(float cpm, float dtSec)
         averageuSvHr = avgCPM / CONVERSION_FACTOR;
     }
 
-    // 3) Max reading
+    // 3) Max
     if(currentuSvHr > maxuSvHr)
     {
         maxuSvHr = currentuSvHr;
     }
 
-    // 4) Cumulative dose (mSv)
+    // 4) Cumulative
+    // currentuSvHr => µSv/h => /3600 => µSv/s => * dtSec => µSv => /1000 => mSv
     float doseIncrement_mSv = (currentuSvHr / 3600.0f) * dtSec / 1000.0f;
     cumulativeDosemSv += doseIncrement_mSv;
 }
 
+/*******************************************************************************
+ * Implementation - Label Updates
+ ******************************************************************************/
+
 /**
- * @brief Show numeric values (no units) in LVGL labels
+ * @brief Convert floats to text and set them in LVGL labels
  */
 void updateLabels()
 {
@@ -412,113 +425,89 @@ void updateLabels()
 }
 
 /*******************************************************************************
- * Implementation - Chart Updates
+ * Implementation - Chart Updates (Single Series)
  ******************************************************************************/
 
 /**
- * @brief Every minute, add currentuSvHr to partial sums.
- *        - After 3 minutes => shift Chart1 left, finalize last bar = partial average
- *        - After 60 minutes => shift Chart3 left, finalize last bar = partial average
+ * @brief Called once per minute. Accumulates partial sums for each chart
+ *        and finalizes the last bar after 3 min (Chart1) or 60 min (Chart3).
  */
 void updateChartsEveryMinute()
 {
     static unsigned long lastMinuteMark = 0;
     unsigned long now = millis();
 
-    // If less than 60,000 ms have passed, skip
-    if((now - lastMinuteMark) < 60000UL) return;
+    if((now - lastMinuteMark) < 60000UL)
+        return; // not a new minute yet
 
-    // Mark the new minute
     lastMinuteMark = now;
 
     // Accumulate partial sums
-    partialSum3Min  += currentuSvHr; 
+    partialSum3Min  += currentuSvHr;
     partialSum60Min += currentuSvHr;
 
     minuteCount3++;
     hourCount++;
 
-    // Check if we've hit 3 min for ui_Chart1
+    // 3-minute segment done?
     if(minuteCount3 >= CHART1_SEGMENT_MIN)
     {
-        // Compute a final average over the 3-minute block
-        float finalAvg = 0.0f;
-        if(minuteCount3 > 0) {
-            finalAvg = partialSum3Min / (float)minuteCount3;
-        }
+        float finalAvg = (minuteCount3 > 0) ? (partialSum3Min / (float)minuteCount3) : 0.0f;
 
-        // Shift chart1 left by 1, store 'finalAvg' in the last bar
         shiftChart1Left();
         chart1Data[CHART1_SEGMENTS - 1] = finalAvg;
 
-        // Update the chart
-        for(int i=0; i<CHART1_SEGMENTS; i++)
-        {
+        // Update ui_Chart1
+        for(int i=0; i<CHART1_SEGMENTS; i++){
             lv_chart_set_value_by_id(ui_Chart1, chart1Series, i, (lv_coord_t)chart1Data[i]);
         }
         lv_chart_refresh(ui_Chart1);
 
-        // Reset partial sum/counter
         partialSum3Min = 0.0f;
         minuteCount3   = 0;
     }
 
-    // Check if we've hit 60 min for ui_Chart3
+    // 60-minute segment done?
     if(hourCount >= 60)
     {
-        float finalAvg = 0.0f;
-        if(hourCount > 0) {
-            finalAvg = partialSum60Min / (float)hourCount;
-        }
+        float finalAvg = (hourCount > 0) ? (partialSum60Min / (float)hourCount) : 0.0f;
 
-        // Shift chart3 left by 1, store finalAvg in the last bar
         shiftChart3Left();
         chart3Data[CHART3_SEGMENTS - 1] = finalAvg;
 
-        // Update the chart
-        for(int i=0; i<CHART3_SEGMENTS; i++)
-        {
+        // Update ui_Chart3
+        for(int i=0; i<CHART3_SEGMENTS; i++){
             lv_chart_set_value_by_id(ui_Chart3, chart3Series, i, (lv_coord_t)chart3Data[i]);
         }
         lv_chart_refresh(ui_Chart3);
 
-        // Reset partial sum/counter
         partialSum60Min = 0.0f;
         hourCount       = 0;
     }
 }
 
 /**
- * @brief Continuously update the "last bar" in ui_Chart1 with the partial average 
- *        so it changes in real time. 
+ * @brief Continuously update the last bar with a partial average
+ *        for the in-progress segment (3 min or 60 min).
  */
 void updateChart1RealTime()
 {
-    // If we haven't started counting, it's 0
     float partialAvg = 0.0f;
-    if(minuteCount3 > 0) {
+    if(minuteCount3 > 0){
         partialAvg = partialSum3Min / (float)minuteCount3;
     }
-
-    // Place this partial average in the last index [CHART1_SEGMENTS-1]
     chart1Data[CHART1_SEGMENTS - 1] = partialAvg;
 
-    // Update that one bar in LVGL
     lv_chart_set_value_by_id(ui_Chart1, chart1Series, CHART1_SEGMENTS - 1, (lv_coord_t)partialAvg);
     lv_chart_refresh(ui_Chart1);
 }
 
-/**
- * @brief Continuously update the "last bar" in ui_Chart3 with the partial average
- *        so it changes in real time.
- */
 void updateChart3RealTime()
 {
     float partialAvg = 0.0f;
-    if(hourCount > 0) {
+    if(hourCount > 0){
         partialAvg = partialSum60Min / (float)hourCount;
     }
-
     chart3Data[CHART3_SEGMENTS - 1] = partialAvg;
 
     lv_chart_set_value_by_id(ui_Chart3, chart3Series, CHART3_SEGMENTS - 1, (lv_coord_t)partialAvg);
@@ -526,31 +515,20 @@ void updateChart3RealTime()
 }
 
 /*******************************************************************************
- * Implementation - Chart Shifting
+ * Implementation - Shift Data
  ******************************************************************************/
-
-/**
- * @brief Shift the chart1Data array left by one position
- *        so we open a new slot at the right end for the next partial average.
- */
 void shiftChart1Left()
 {
-    for(int i=0; i < CHART1_SEGMENTS - 1; i++)
-    {
-        chart1Data[i] = chart1Data[i + 1];
+    for(int i=0; i < CHART1_SEGMENTS-1; i++){
+        chart1Data[i] = chart1Data[i+1];
     }
-    chart1Data[CHART1_SEGMENTS - 1] = 0.0f; // clear the last slot
+    chart1Data[CHART1_SEGMENTS - 1] = 0.0f;
 }
 
-/**
- * @brief Shift the chart3Data array left by one position
- *        so we open a new slot at the right end for the next partial average.
- */
 void shiftChart3Left()
 {
-    for(int i=0; i < CHART3_SEGMENTS - 1; i++)
-    {
-        chart3Data[i] = chart3Data[i + 1];
+    for(int i=0; i < CHART3_SEGMENTS-1; i++){
+        chart3Data[i] = chart3Data[i+1];
     }
-    chart3Data[CHART3_SEGMENTS - 1] = 0.0f; // clear last slot
+    chart3Data[CHART3_SEGMENTS - 1] = 0.0f;
 }
