@@ -16,7 +16,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button1",
+                "strval": "SelectGM",
                 "InheritedType": 10
               },
               {
@@ -205,7 +205,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button2",
+                "strval": "SelectSB",
                 "InheritedType": 10
               },
               {
@@ -525,7 +525,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button3",
+                "strval": "StartButton",
                 "InheritedType": 10
               },
               {
@@ -1119,7 +1119,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen1",
+            "strval": "InitialScreen",
             "InheritedType": 10
           },
           {
@@ -5744,7 +5744,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen2",
+            "strval": "MainScreen",
             "InheritedType": 10
           },
           {
@@ -8110,7 +8110,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen3",
+            "strval": "Charts1h",
             "InheritedType": 10
           },
           {
@@ -9932,7 +9932,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button39",
+                "strval": "MoreVoltage",
                 "InheritedType": 10
               },
               {
@@ -10202,7 +10202,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button38",
+                "strval": "LessVoltage",
                 "InheritedType": 10
               },
               {
@@ -10599,7 +10599,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Button40",
+                "strval": "AutoCalibrate",
                 "InheritedType": 10
               },
               {
@@ -10728,7 +10728,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen4",
+            "strval": "VoltageScreen",
             "InheritedType": 10
           },
           {
@@ -12440,7 +12440,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen5",
+            "strval": "Settings",
             "InheritedType": 10
           },
           {
@@ -14806,7 +14806,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen6",
+            "strval": "Charts24h",
             "InheritedType": 10
           },
           {
@@ -17173,7 +17173,7 @@
           {
             "nid": 10,
             "strtype": "OBJECT/Name",
-            "strval": "Screen7",
+            "strval": "ChartsSpectrum",
             "InheritedType": 10
           },
           {
