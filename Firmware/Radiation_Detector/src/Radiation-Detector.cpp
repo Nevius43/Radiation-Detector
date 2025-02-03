@@ -120,7 +120,8 @@ void setup()
 
     initPulsePin();
     initBuzzer();
-
+    pinMode(16,OUTPUT);
+    analogWrite(16,255);
     startTime = millis();
     lastLoop  = startTime;
 
