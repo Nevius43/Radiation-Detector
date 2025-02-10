@@ -25,22 +25,25 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
-// SCREEN: ui_Screen1
-void ui_Screen1_screen_init(void);
-extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_Button1;
-extern lv_obj_t * ui_Button2;
-void ui_event_Button3(lv_event_t * e);
-extern lv_obj_t * ui_Button3;
+void KeyboardPopup_Animation(lv_obj_t * TargetObject, int delay);
+void KeyboardHide_Animation(lv_obj_t * TargetObject, int delay);
+
+// SCREEN: ui_InitialScreen
+void ui_InitialScreen_screen_init(void);
+extern lv_obj_t * ui_InitialScreen;
+extern lv_obj_t * ui_SelectGM;
+extern lv_obj_t * ui_SelectSB;
+void ui_event_StartButton(lv_event_t * e);
+extern lv_obj_t * ui_StartButton;
 extern lv_obj_t * ui_Label1;
 extern lv_obj_t * ui_Label2;
 extern lv_obj_t * ui_Label5;
 extern lv_obj_t * ui_Label6;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen2
-void ui_Screen2_screen_init(void);
-extern lv_obj_t * ui_Screen2;
+// SCREEN: ui_MainScreen
+void ui_MainScreen_screen_init(void);
+extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_Container3;
 extern lv_obj_t * ui_Button4;
 void ui_event_Button5(lv_event_t * e);
@@ -76,9 +79,9 @@ extern lv_obj_t * ui_Panel10;
 extern lv_obj_t * ui_Label38;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen3
-void ui_Screen3_screen_init(void);
-extern lv_obj_t * ui_Screen3;
+// SCREEN: ui_Charts1h
+void ui_Charts1h_screen_init(void);
+extern lv_obj_t * ui_Charts1h;
 extern lv_obj_t * ui_Container1;
 void ui_event_Button8(lv_event_t * e);
 extern lv_obj_t * ui_Button8;
@@ -99,9 +102,9 @@ extern lv_obj_t * ui_Label7;
 extern lv_obj_t * ui_Chart1;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen4
-void ui_Screen4_screen_init(void);
-extern lv_obj_t * ui_Screen4;
+// SCREEN: ui_VoltageScreen
+void ui_VoltageScreen_screen_init(void);
+extern lv_obj_t * ui_VoltageScreen;
 extern lv_obj_t * ui_Panel3;
 extern lv_obj_t * ui_Container2;
 void ui_event_Button12(lv_event_t * e);
@@ -115,18 +118,19 @@ extern lv_obj_t * ui_Panel2;
 extern lv_obj_t * ui_Label20;
 extern lv_obj_t * ui_Label21;
 extern lv_obj_t * ui_CurrentVoltage;
-extern lv_obj_t * ui_Button39;
+extern lv_obj_t * ui_MoreVoltage;
 extern lv_obj_t * ui_Label24;
-extern lv_obj_t * ui_Button38;
+extern lv_obj_t * ui_LessVoltage;
 extern lv_obj_t * ui_Label25;
 extern lv_obj_t * ui_TargetVoltage;
-extern lv_obj_t * ui_Button40;
+extern lv_obj_t * ui_AutoCalibrate;
 extern lv_obj_t * ui_Label26;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen5
-void ui_Screen5_screen_init(void);
-extern lv_obj_t * ui_Screen5;
+// SCREEN: ui_Settings
+void ui_Settings_screen_init(void);
+void ui_event_Settings(lv_event_t * e);
+extern lv_obj_t * ui_Settings;
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_Container4;
 void ui_event_Button16(lv_event_t * e);
@@ -136,16 +140,24 @@ extern lv_obj_t * ui_Button17;
 void ui_event_Button18(lv_event_t * e);
 extern lv_obj_t * ui_Button18;
 extern lv_obj_t * ui_Button19;
-extern lv_obj_t * ui_Keyboard2;
 void ui_event_TextArea2(lv_event_t * e);
 extern lv_obj_t * ui_TextArea2;
 void ui_event_TextArea1(lv_event_t * e);
 extern lv_obj_t * ui_TextArea1;
+extern lv_obj_t * ui_Panel11;
+extern lv_obj_t * ui_Label14;
+extern lv_obj_t * ui_Label15;
+extern lv_obj_t * ui_Label16;
+extern lv_obj_t * ui_Slider2;
+extern lv_obj_t * ui_Slider1;
+extern lv_obj_t * ui_Keyboard;
+extern lv_obj_t * ui_Panel12;
+extern lv_obj_t * ui_Label17;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen6
-void ui_Screen6_screen_init(void);
-extern lv_obj_t * ui_Screen6;
+// SCREEN: ui_Charts24h
+void ui_Charts24h_screen_init(void);
+extern lv_obj_t * ui_Charts24h;
 extern lv_obj_t * ui_Container5;
 void ui_event_Button23(lv_event_t * e);
 extern lv_obj_t * ui_Button23;
@@ -166,9 +178,9 @@ extern lv_obj_t * ui_Label10;
 extern lv_obj_t * ui_Chart3;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen7
-void ui_Screen7_screen_init(void);
-extern lv_obj_t * ui_Screen7;
+// SCREEN: ui_ChartsSpectrum
+void ui_ChartsSpectrum_screen_init(void);
+extern lv_obj_t * ui_ChartsSpectrum;
 extern lv_obj_t * ui_Container8;
 void ui_event_Button30(lv_event_t * e);
 extern lv_obj_t * ui_Button30;
@@ -195,11 +207,11 @@ extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_176188083);    // assets/GMtube (100 x 100 px) (4).png
-LV_IMG_DECLARE(ui_img_383071526);    // assets/SurfaceBarrier (2).png
-LV_IMG_DECLARE(ui_img_1719020684);    // assets/radiation (1).png
-LV_IMG_DECLARE(ui_img_220545925);    // assets/bar-chart (1).png
-LV_IMG_DECLARE(ui_img_1666199263);    // assets/lightning (1).png
-LV_IMG_DECLARE(ui_img_85097194);    // assets/gear (1) (1).png
+LV_IMG_DECLARE(ui_img_star_png);    // assets/star.png
+LV_IMG_DECLARE(ui_img_radiation_png);    // assets/radiation.png
+LV_IMG_DECLARE(ui_img_1345346577);    // assets/bar-chart.png
+LV_IMG_DECLARE(ui_img_electricity_png);    // assets/electricity.png
+LV_IMG_DECLARE(ui_img_settings_png);    // assets/settings.png
 LV_IMG_DECLARE(ui_img_584212719);    // assets/reiniciar (1).png
 
 // FONTS

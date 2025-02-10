@@ -337,7 +337,7 @@ void handleNewPulses()
         totalCounts++;
 
         // Buzzer beep
-        tone(BUZZER_PIN, BEEP_FREQ, BEEP_MS);
+        //tone(BUZZER_PIN, BEEP_FREQ, BEEP_MS);
     }
 }
 

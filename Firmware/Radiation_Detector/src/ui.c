@@ -7,15 +7,17 @@
 #include "ui_helpers.h"
 
 ///////////////////// VARIABLES ////////////////////
+void KeyboardPopup_Animation(lv_obj_t * TargetObject, int delay);
+void KeyboardHide_Animation(lv_obj_t * TargetObject, int delay);
 
 
-// SCREEN: ui_Screen1
-void ui_Screen1_screen_init(void);
-lv_obj_t * ui_Screen1;
-lv_obj_t * ui_Button1;
-lv_obj_t * ui_Button2;
-void ui_event_Button3(lv_event_t * e);
-lv_obj_t * ui_Button3;
+// SCREEN: ui_InitialScreen
+void ui_InitialScreen_screen_init(void);
+lv_obj_t * ui_InitialScreen;
+lv_obj_t * ui_SelectGM;
+lv_obj_t * ui_SelectSB;
+void ui_event_StartButton(lv_event_t * e);
+lv_obj_t * ui_StartButton;
 lv_obj_t * ui_Label1;
 lv_obj_t * ui_Label2;
 lv_obj_t * ui_Label5;
@@ -23,9 +25,9 @@ lv_obj_t * ui_Label6;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen2
-void ui_Screen2_screen_init(void);
-lv_obj_t * ui_Screen2;
+// SCREEN: ui_MainScreen
+void ui_MainScreen_screen_init(void);
+lv_obj_t * ui_MainScreen;
 lv_obj_t * ui_Container3;
 lv_obj_t * ui_Button4;
 void ui_event_Button5(lv_event_t * e);
@@ -62,9 +64,9 @@ lv_obj_t * ui_Label38;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen3
-void ui_Screen3_screen_init(void);
-lv_obj_t * ui_Screen3;
+// SCREEN: ui_Charts1h
+void ui_Charts1h_screen_init(void);
+lv_obj_t * ui_Charts1h;
 lv_obj_t * ui_Container1;
 void ui_event_Button8(lv_event_t * e);
 lv_obj_t * ui_Button8;
@@ -86,9 +88,9 @@ lv_obj_t * ui_Chart1;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen4
-void ui_Screen4_screen_init(void);
-lv_obj_t * ui_Screen4;
+// SCREEN: ui_VoltageScreen
+void ui_VoltageScreen_screen_init(void);
+lv_obj_t * ui_VoltageScreen;
 lv_obj_t * ui_Panel3;
 lv_obj_t * ui_Container2;
 void ui_event_Button12(lv_event_t * e);
@@ -102,19 +104,20 @@ lv_obj_t * ui_Panel2;
 lv_obj_t * ui_Label20;
 lv_obj_t * ui_Label21;
 lv_obj_t * ui_CurrentVoltage;
-lv_obj_t * ui_Button39;
+lv_obj_t * ui_MoreVoltage;
 lv_obj_t * ui_Label24;
-lv_obj_t * ui_Button38;
+lv_obj_t * ui_LessVoltage;
 lv_obj_t * ui_Label25;
 lv_obj_t * ui_TargetVoltage;
-lv_obj_t * ui_Button40;
+lv_obj_t * ui_AutoCalibrate;
 lv_obj_t * ui_Label26;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen5
-void ui_Screen5_screen_init(void);
-lv_obj_t * ui_Screen5;
+// SCREEN: ui_Settings
+void ui_Settings_screen_init(void);
+void ui_event_Settings(lv_event_t * e);
+lv_obj_t * ui_Settings;
 lv_obj_t * ui_Panel4;
 lv_obj_t * ui_Container4;
 void ui_event_Button16(lv_event_t * e);
@@ -124,17 +127,25 @@ lv_obj_t * ui_Button17;
 void ui_event_Button18(lv_event_t * e);
 lv_obj_t * ui_Button18;
 lv_obj_t * ui_Button19;
-lv_obj_t * ui_Keyboard2;
 void ui_event_TextArea2(lv_event_t * e);
 lv_obj_t * ui_TextArea2;
 void ui_event_TextArea1(lv_event_t * e);
 lv_obj_t * ui_TextArea1;
+lv_obj_t * ui_Panel11;
+lv_obj_t * ui_Label14;
+lv_obj_t * ui_Label15;
+lv_obj_t * ui_Label16;
+lv_obj_t * ui_Slider2;
+lv_obj_t * ui_Slider1;
+lv_obj_t * ui_Keyboard;
+lv_obj_t * ui_Panel12;
+lv_obj_t * ui_Label17;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen6
-void ui_Screen6_screen_init(void);
-lv_obj_t * ui_Screen6;
+// SCREEN: ui_Charts24h
+void ui_Charts24h_screen_init(void);
+lv_obj_t * ui_Charts24h;
 lv_obj_t * ui_Container5;
 void ui_event_Button23(lv_event_t * e);
 lv_obj_t * ui_Button23;
@@ -156,9 +167,9 @@ lv_obj_t * ui_Chart3;
 // CUSTOM VARIABLES
 
 
-// SCREEN: ui_Screen7
-void ui_Screen7_screen_init(void);
-lv_obj_t * ui_Screen7;
+// SCREEN: ui_ChartsSpectrum
+void ui_ChartsSpectrum_screen_init(void);
+lv_obj_t * ui_ChartsSpectrum;
 lv_obj_t * ui_Container8;
 void ui_event_Button30(lv_event_t * e);
 lv_obj_t * ui_Button30;
@@ -193,14 +204,58 @@ lv_obj_t * ui____initial_actions0;
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
+void KeyboardPopup_Animation(lv_obj_t * TargetObject, int delay)
+{
+    ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
+    PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->val = -1;
+    lv_anim_t PropertyAnimation_0;
+    lv_anim_init(&PropertyAnimation_0);
+    lv_anim_set_time(&PropertyAnimation_0, 300);
+    lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
+    lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_y);
+    lv_anim_set_values(&PropertyAnimation_0, 140, 0);
+    lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_out);
+    lv_anim_set_delay(&PropertyAnimation_0, delay + 0);
+    lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
+    lv_anim_set_playback_time(&PropertyAnimation_0, 0);
+    lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_repeat_count(&PropertyAnimation_0, 0);
+    lv_anim_set_repeat_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_early_apply(&PropertyAnimation_0, false);
+    lv_anim_start(&PropertyAnimation_0);
+
+}
+void KeyboardHide_Animation(lv_obj_t * TargetObject, int delay)
+{
+    ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
+    PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->val = -1;
+    lv_anim_t PropertyAnimation_0;
+    lv_anim_init(&PropertyAnimation_0);
+    lv_anim_set_time(&PropertyAnimation_0, 300);
+    lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
+    lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_y);
+    lv_anim_set_values(&PropertyAnimation_0, 0, 140);
+    lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_out);
+    lv_anim_set_delay(&PropertyAnimation_0, delay + 0);
+    lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
+    lv_anim_set_playback_time(&PropertyAnimation_0, 0);
+    lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_repeat_count(&PropertyAnimation_0, 0);
+    lv_anim_set_repeat_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_early_apply(&PropertyAnimation_0, false);
+    lv_anim_start(&PropertyAnimation_0);
+
+}
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_Button3(lv_event_t * e)
+void ui_event_StartButton(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -209,7 +264,7 @@ void ui_event_Button5(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
+        _ui_screen_change(&ui_Charts1h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts1h_screen_init);
     }
 }
 
@@ -218,7 +273,7 @@ void ui_event_Button6(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
+        _ui_screen_change(&ui_VoltageScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_VoltageScreen_screen_init);
     }
 }
 
@@ -227,7 +282,7 @@ void ui_event_Button7(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
     }
 }
 
@@ -236,7 +291,7 @@ void ui_event_Button8(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -245,7 +300,7 @@ void ui_event_Button10(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
+        _ui_screen_change(&ui_VoltageScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_VoltageScreen_screen_init);
     }
 }
 
@@ -254,7 +309,7 @@ void ui_event_Button11(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
     }
 }
 
@@ -263,7 +318,7 @@ void ui_event_Button20(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen6, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen6_screen_init);
+        _ui_screen_change(&ui_Charts24h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts24h_screen_init);
     }
 }
 
@@ -272,7 +327,7 @@ void ui_event_Button21(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen7, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen7_screen_init);
+        _ui_screen_change(&ui_ChartsSpectrum, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ChartsSpectrum_screen_init);
     }
 }
 
@@ -281,7 +336,7 @@ void ui_event_Button12(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -290,7 +345,7 @@ void ui_event_Button13(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
+        _ui_screen_change(&ui_Charts1h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts1h_screen_init);
     }
 }
 
@@ -299,7 +354,16 @@ void ui_event_Button15(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
+    }
+}
+
+void ui_event_Settings(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        KeyboardHide_Animation(ui_Keyboard, 0);
     }
 }
 
@@ -308,7 +372,7 @@ void ui_event_Button16(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -317,7 +381,7 @@ void ui_event_Button17(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
+        _ui_screen_change(&ui_Charts1h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts1h_screen_init);
     }
 }
 
@@ -326,7 +390,7 @@ void ui_event_Button18(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
+        _ui_screen_change(&ui_VoltageScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_VoltageScreen_screen_init);
     }
 }
 
@@ -335,7 +399,8 @@ void ui_event_TextArea2(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_FOCUSED) {
-        _ui_keyboard_set_target(ui_Keyboard2,  ui_TextArea2);
+        _ui_keyboard_set_target(ui_Keyboard,  ui_TextArea2);
+        KeyboardPopup_Animation(ui_Keyboard, 0);
     }
 }
 
@@ -344,7 +409,8 @@ void ui_event_TextArea1(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_FOCUSED) {
-        _ui_keyboard_set_target(ui_Keyboard2,  ui_TextArea1);
+        _ui_keyboard_set_target(ui_Keyboard,  ui_TextArea1);
+        KeyboardPopup_Animation(ui_Keyboard, 0);
     }
 }
 
@@ -353,7 +419,7 @@ void ui_event_Button23(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -362,7 +428,7 @@ void ui_event_Button25(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
+        _ui_screen_change(&ui_VoltageScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_VoltageScreen_screen_init);
     }
 }
 
@@ -371,7 +437,7 @@ void ui_event_Button26(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
     }
 }
 
@@ -380,7 +446,7 @@ void ui_event_Button28(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen7, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen7_screen_init);
+        _ui_screen_change(&ui_ChartsSpectrum, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ChartsSpectrum_screen_init);
     }
 }
 
@@ -389,7 +455,7 @@ void ui_event_Button29(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
+        _ui_screen_change(&ui_Charts1h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts1h_screen_init);
     }
 }
 
@@ -398,7 +464,7 @@ void ui_event_Button30(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+        _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_MainScreen_screen_init);
     }
 }
 
@@ -407,7 +473,7 @@ void ui_event_Button32(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
+        _ui_screen_change(&ui_VoltageScreen, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_VoltageScreen_screen_init);
     }
 }
 
@@ -416,7 +482,7 @@ void ui_event_Button33(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
     }
 }
 
@@ -425,7 +491,7 @@ void ui_event_Button34(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen6, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen6_screen_init);
+        _ui_screen_change(&ui_Charts24h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts24h_screen_init);
     }
 }
 
@@ -434,7 +500,7 @@ void ui_event_Button36(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
+        _ui_screen_change(&ui_Charts1h, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Charts1h_screen_init);
     }
 }
 
@@ -446,13 +512,13 @@ void ui_init(void)
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                true, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
-    ui_Screen1_screen_init();
-    ui_Screen2_screen_init();
-    ui_Screen3_screen_init();
-    ui_Screen4_screen_init();
-    ui_Screen5_screen_init();
-    ui_Screen6_screen_init();
-    ui_Screen7_screen_init();
+    ui_InitialScreen_screen_init();
+    ui_MainScreen_screen_init();
+    ui_Charts1h_screen_init();
+    ui_VoltageScreen_screen_init();
+    ui_Settings_screen_init();
+    ui_Charts24h_screen_init();
+    ui_ChartsSpectrum_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_Screen1);
+    lv_disp_load_scr(ui_InitialScreen);
 }

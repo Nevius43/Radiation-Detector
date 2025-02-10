@@ -5,14 +5,14 @@
 
 #include "ui.h"
 
-void ui_Screen6_screen_init(void)
+void ui_Charts24h_screen_init(void)
 {
-    ui_Screen6 = lv_obj_create(NULL);
-    lv_obj_clear_flag(ui_Screen6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Screen6, lv_color_hex(0x363383), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Screen6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Charts24h = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Charts24h, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Charts24h, lv_color_hex(0x333333), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Charts24h, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Container5 = lv_obj_create(ui_Screen6);
+    ui_Container5 = lv_obj_create(ui_Charts24h);
     lv_obj_remove_style_all(ui_Container5);
     lv_obj_set_width(ui_Container5, 480);
     lv_obj_set_height(ui_Container5, 50);
@@ -27,9 +27,9 @@ void ui_Screen6_screen_init(void)
     lv_obj_add_flag(ui_Button23, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_Button23, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_Button23, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Button23, lv_color_hex(0x4A4CD5), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Button23, lv_color_hex(0x5456D5), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Button23, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_Button23, &ui_img_1719020684, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Button23, &ui_img_radiation_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button24 = lv_btn_create(ui_Container5);
     lv_obj_set_width(ui_Button24, 120);
@@ -40,9 +40,9 @@ void ui_Screen6_screen_init(void)
     lv_obj_add_flag(ui_Button24, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_Button24, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_Button24, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Button24, lv_color_hex(0x5BD16D), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Button24, lv_color_hex(0x99D1A2), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Button24, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_Button24, &ui_img_220545925, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Button24, &ui_img_1345346577, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button25 = lv_btn_create(ui_Container5);
     lv_obj_set_width(ui_Button25, 120);
@@ -53,9 +53,9 @@ void ui_Screen6_screen_init(void)
     lv_obj_add_flag(ui_Button25, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_Button25, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_Button25, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Button25, lv_color_hex(0x4A4CD5), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Button25, lv_color_hex(0x5456D5), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Button25, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_Button25, &ui_img_1666199263, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Button25, &ui_img_electricity_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button26 = lv_btn_create(ui_Container5);
     lv_obj_set_width(ui_Button26, 120);
@@ -66,11 +66,11 @@ void ui_Screen6_screen_init(void)
     lv_obj_add_flag(ui_Button26, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_Button26, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_Button26, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Button26, lv_color_hex(0x5255EE), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Button26, lv_color_hex(0x7274ED), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Button26, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_Button26, &ui_img_85097194, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Button26, &ui_img_settings_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Container7 = lv_obj_create(ui_Screen6);
+    ui_Container7 = lv_obj_create(ui_Charts24h);
     lv_obj_remove_style_all(ui_Container7);
     lv_obj_set_width(ui_Container7, 480);
     lv_obj_set_height(ui_Container7, 20);
@@ -127,7 +127,7 @@ void ui_Screen6_screen_init(void)
     lv_obj_set_align(ui_Label10, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label10, "1 Hour");
 
-    ui_Chart3 = lv_chart_create(ui_Screen6);
+    ui_Chart3 = lv_chart_create(ui_Charts24h);
     lv_obj_set_width(ui_Chart3, 396);
     lv_obj_set_height(ui_Chart3, 192);
     lv_obj_set_x(ui_Chart3, 0);
@@ -141,7 +141,7 @@ void ui_Screen6_screen_init(void)
     lv_chart_set_axis_tick(ui_Chart3, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, false, 25);
     lv_chart_series_t * ui_Chart3_series_1 = lv_chart_add_series(ui_Chart3, lv_color_hex(0xE0C810),
                                                                  LV_CHART_AXIS_PRIMARY_Y);
-    static lv_coord_t ui_Chart3_series_1_array[] = { 1, 2, 34, 65, 3, 2, 5, 7, 4, 32, 2, 56, 4, 3, 2, 3, 4, 4, 3, 2, 5, 6, 7, 6 };
+    static lv_coord_t ui_Chart3_series_1_array[] = { 0 };
     lv_chart_set_ext_y_array(ui_Chart3, ui_Chart3_series_1, ui_Chart3_series_1_array);
 
 
