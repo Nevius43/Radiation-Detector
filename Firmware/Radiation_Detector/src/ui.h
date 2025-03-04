@@ -129,7 +129,6 @@ extern lv_obj_t * ui_Label26;
 
 // SCREEN: ui_Settings
 void ui_Settings_screen_init(void);
-void ui_event_Settings(lv_event_t * e);
 extern lv_obj_t * ui_Settings;
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_Container4;
@@ -140,19 +139,24 @@ extern lv_obj_t * ui_Button17;
 void ui_event_Button18(lv_event_t * e);
 extern lv_obj_t * ui_Button18;
 extern lv_obj_t * ui_Button19;
-void ui_event_TextArea2(lv_event_t * e);
-extern lv_obj_t * ui_TextArea2;
-void ui_event_TextArea1(lv_event_t * e);
-extern lv_obj_t * ui_TextArea1;
 extern lv_obj_t * ui_Panel11;
 extern lv_obj_t * ui_Label14;
 extern lv_obj_t * ui_Label15;
 extern lv_obj_t * ui_Label16;
 extern lv_obj_t * ui_Slider2;
 extern lv_obj_t * ui_Slider1;
+void ui_event_Keyboard(lv_event_t * e);
 extern lv_obj_t * ui_Keyboard;
 extern lv_obj_t * ui_Panel12;
-extern lv_obj_t * ui_Label17;
+extern lv_obj_t * ui_WIFIINFO;
+void ui_event_Container10(lv_event_t * e);
+extern lv_obj_t * ui_Container10;
+void ui_event_PASSWORD(lv_event_t * e);
+extern lv_obj_t * ui_PASSWORD;
+void ui_event_SSID(lv_event_t * e);
+extern lv_obj_t * ui_SSID;
+extern lv_obj_t * ui_Connect;
+extern lv_obj_t * ui_Label18;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Charts24h

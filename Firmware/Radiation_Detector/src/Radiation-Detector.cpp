@@ -3,8 +3,12 @@
  ******************************************************************************/
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-#include "ui.h"  // Must declare/extern: ui_Chart1, ui_Chart3, ui_CurrentRad, etc.
+#include "ui.h"  // Must declare/extern: ui_Chart1, ui_Chart3, ui_CurrentRad, ui_AverageRad, ui_MaximumRad, ui_CumulativeRad
+               // Also: ui_SSID, ui_PASSWORD, ui_WIFIINFO, ui_Connect
 #include <vector>
+#include <WiFi.h>
+#include <time.h>
+#include <EEPROM.h>  // For storing WiFi credentials
 
 /*******************************************************************************
  * Definitions & Constants
@@ -16,13 +20,11 @@ static const uint16_t SCREEN_HEIGHT = 320;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[ SCREEN_WIDTH * SCREEN_HEIGHT / 10 ];
 
-/* Schmitt trigger digital output pin */
+/* Geiger counter pulse input and buzzer settings */
 static const uint8_t GEIGER_PULSE_PIN = 9;
-
-/* Buzzer pin and beep settings */
 static const uint8_t BUZZER_PIN       = 38;
-static const unsigned int BEEP_FREQ   = 40;  // 40 Hz is typically inaudible
-static const unsigned long BEEP_MS    = 50;  // beep duration (ms)
+static const unsigned int BEEP_FREQ   = 40;  // 40 Hz (typically inaudible)
+static const unsigned long BEEP_MS    = 50;   // beep duration (ms)
 
 /* Conversion factor for CPM -> µSv/h */
 static const float CONVERSION_FACTOR = 153.8f;
@@ -31,11 +33,11 @@ static const float CONVERSION_FACTOR = 153.8f;
 static std::vector<unsigned long> events;
 
 /* All-time counts & timing */
-static unsigned long totalCounts = 0;   
-static unsigned long startTime   = 0;   
-static unsigned long lastLoop    = 0;   
+static unsigned long totalCounts = 0;
+static unsigned long startTime   = 0;
+static unsigned long lastLoop    = 0;
 
-/* Real-time variables for label display */
+/* Real-time radiation variables for label display */
 static float currentuSvHr      = 0.0f;
 static float averageuSvHr      = 0.0f;
 static float maxuSvHr          = 0.0f;
@@ -43,12 +45,11 @@ static float cumulativeDosemSv = 0.0f;
 
 /*******************************************************************************
  * Chart Configuration
- *  - ui_Chart1: 20 bars -> 3 min each -> 60 min total
- *  - ui_Chart3: 24 bars -> 1 hour each -> 24 hours total
+ *   - ui_Chart1: 20 bars → 3 min each → 60 min total
+ *   - ui_Chart3: 24 bars → 1 hour each → 24 hours total
  ******************************************************************************/
 static const int CHART1_SEGMENTS    = 20;
 static const int CHART1_SEGMENT_MIN = 3;   // 3-minute segments
-
 static const int CHART3_SEGMENTS    = 24;
 static const int CHART3_SEGMENT_HR  = 1;   // 1-hour segments
 
@@ -59,11 +60,10 @@ static float chart3Data[CHART3_SEGMENTS] = {0.0f};
 /* Partial sums for building each bar segment */
 static float partialSum3Min = 0.0f;
 static int   minuteCount3   = 0;
-
 static float partialSum60Min = 0.0f;
 static int   hourCount       = 0;
 
-/* LVGL Objects (from your UI) */
+/* LVGL Objects for charts and radiation values (from your UI) */
 extern lv_obj_t* ui_CurrentRad;
 extern lv_obj_t* ui_AverageRad;
 extern lv_obj_t* ui_MaximumRad;
@@ -79,8 +79,27 @@ static lv_chart_series_t* chart3Series = nullptr;
  * Interrupt-Related Variables
  ******************************************************************************/
 static volatile bool newPulseFlag = false;         // set by ISR, cleared in loop
-static volatile unsigned long lastInterruptMs = 0; // optional lockout
-static const unsigned long PULSE_LOCKOUT_MS  = 5;  // ignore pulses within 5ms
+static volatile unsigned long lastInterruptMs = 0;   // for lockout
+static const unsigned long PULSE_LOCKOUT_MS  = 5;    // ignore pulses within 5ms
+
+/*******************************************************************************
+ * EEPROM & WiFi Credentials
+ ******************************************************************************/
+#define EEPROM_SIZE 512
+// Maximum lengths (including terminating null) for credentials
+#define MAX_SSID_LEN 32
+#define MAX_PASS_LEN 64
+
+struct WifiCredentials {
+    char ssid[MAX_SSID_LEN];
+    char password[MAX_PASS_LEN];
+};
+
+// Global instance to hold credentials
+WifiCredentials wifiCred;
+
+// Global variable for WiFi IP address
+static String wifi_ip = "";
 
 /*******************************************************************************
  * Function Prototypes
@@ -91,10 +110,10 @@ void initLVGL();
 void assignChartSeries();
 
 void initPulsePin();
-void IRAM_ATTR geigerPulseISR(); // the ISR
+void IRAM_ATTR geigerPulseISR();
 
 void initBuzzer();
-void handleNewPulses();  // main-loop logic that processes ISR pulses
+void handleNewPulses();
 
 void removeOldEvents();
 float getRealTimeCPM();
@@ -108,18 +127,32 @@ void updateChart3RealTime();
 void shiftChart1Left();
 void shiftChart3Left();
 
-/*******************************************************************************
- * setup()
- ******************************************************************************/
+// WiFi connection event callback
+static void connect_btn_event_cb(lv_event_t *e);
+
+// Function to try connecting with saved credentials
+void tryAutoConnect();
+
+//////////////////////////////////////////////////////////////////////////////
+// setup()
+//////////////////////////////////////////////////////////////////////////////
 void setup()
 {
     initSerial();
+    EEPROM.begin(EEPROM_SIZE);  // Initialize EEPROM storage
     initTFT();
-    initLVGL();          
-    assignChartSeries(); 
+    initLVGL();
+    assignChartSeries();
 
+    // Initialize Geiger counter hardware
     initPulsePin();
     initBuzzer();
+
+    // Attach WiFi Connect callback to the existing ui_Connect button
+    lv_obj_add_event_cb(ui_Connect, connect_btn_event_cb, LV_EVENT_CLICKED, NULL);
+
+    // Try auto-connecting if credentials are saved
+    tryAutoConnect();
 
     startTime = millis();
     lastLoop  = startTime;
@@ -127,47 +160,52 @@ void setup()
     Serial.println("Setup completed.");
 }
 
-/*******************************************************************************
- * loop()
- ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////
+// loop()
+//////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-    // 1) LVGL tasks
+    // Process LVGL tasks
     lv_timer_handler();
 
-    // 2) Check if ISR flagged new pulses
+    // Process Geiger pulses and update radiation stats
     handleNewPulses();
-
-    // 3) Remove old events from 1-min window
     removeOldEvents();
 
-    // 4) Time step for dose integration
     unsigned long now = millis();
     float dtSec = (float)(now - lastLoop) / 1000.0f;
     lastLoop = now;
 
-    // 5) Real-time CPM from events => dose stats
     float cpm = getRealTimeCPM();
     updateRealTimeStats(cpm, dtSec);
-
-    // 6) Update numeric labels
     updateLabels();
-
-    // 7) Charts once per minute
     updateChartsEveryMinute();
-
-    // 8) Update last bar in real time
     updateChart1RealTime();
     updateChart3RealTime();
 
-    // optional delay
+    // --- Update WiFi time every second if connected ---
+    static unsigned long lastTimeUpdate = 0;
+    if (WiFi.status() == WL_CONNECTED && (now - lastTimeUpdate >= 1000)) {
+        lastTimeUpdate = now;
+        struct tm timeinfo;
+        if (getLocalTime(&timeinfo)) {
+            char timeStr[64];
+            strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+            // Append " UTC" after the time
+            String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
+            lv_label_set_text(ui_WIFIINFO, info.c_str());
+        } else {
+            String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
+            lv_label_set_text(ui_WIFIINFO, info.c_str());
+        }
+    }
+    // Optional short delay for stability
     // delay(5);
 }
 
-/*******************************************************************************
- * Implementation - Initialization
- ******************************************************************************/
-
+//////////////////////////////////////////////////////////////////////////////
+// Initialization Functions
+//////////////////////////////////////////////////////////////////////////////
 void initSerial()
 {
     Serial.begin(115200);
@@ -180,7 +218,7 @@ void initTFT()
     tft.begin();
     tft.setRotation(1);
 
-    // Example calibration
+    // Example touch calibration (adjust as needed)
     uint16_t calData[5] = {267, 3646, 198, 3669, 6};
     tft.setTouch(calData);
 
@@ -192,7 +230,7 @@ void initLVGL()
     lv_init();
     lv_disp_draw_buf_init(&draw_buf, buf, NULL, SCREEN_WIDTH * SCREEN_HEIGHT / 10);
 
-    // Minimal flush callback
+    // Minimal flush callback for LVGL
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.hor_res = SCREEN_WIDTH;
@@ -219,7 +257,7 @@ void initLVGL()
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register(&disp_drv);
 
-    // (Optional) Simple touch driver
+    // (Optional) Simple touch driver for LVGL
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -246,7 +284,7 @@ void initLVGL()
     };
     lv_indev_drv_register(&indev_drv);
 
-    // Create UI
+    // Create UI elements (your ui_init() function defined in ui.h)
     ui_init();
 
     Serial.println("LVGL initialized + UI created.");
@@ -265,12 +303,12 @@ void assignChartSeries()
     }
 
     // Initialize chart data to zero
-    for(int i=0; i<CHART1_SEGMENTS; i++){
+    for (int i = 0; i < CHART1_SEGMENTS; i++){
         lv_chart_set_value_by_id(ui_Chart1, chart1Series, i, 0);
     }
     lv_chart_refresh(ui_Chart1);
 
-    for(int i=0; i<CHART3_SEGMENTS; i++){
+    for (int i = 0; i < CHART3_SEGMENTS; i++){
         lv_chart_set_value_by_id(ui_Chart3, chart3Series, i, 0);
     }
     lv_chart_refresh(ui_Chart3);
@@ -278,24 +316,16 @@ void assignChartSeries()
     Serial.println("Chart series assigned.");
 }
 
-/*******************************************************************************
- * ISR-based Pulse Detection
- ******************************************************************************/
-
-/**
- * @brief Configure the digital pin and attach rising-edge interrupt.
- */
+//////////////////////////////////////////////////////////////////////////////
+// Geiger Pulse & Buzzer Functions
+//////////////////////////////////////////////////////////////////////////////
 void initPulsePin()
 {
-    pinMode(GEIGER_PULSE_PIN, INPUT); // or INPUT_PULLDOWN if your hardware uses internal pull-down
+    pinMode(GEIGER_PULSE_PIN, INPUT); // or use INPUT_PULLDOWN if needed
     attachInterrupt(digitalPinToInterrupt(GEIGER_PULSE_PIN), geigerPulseISR, RISING);
     Serial.println("Geiger pulse pin set for interrupt on RISING edge.");
 }
 
-/**
- * @brief The ISR for geiger pulses.
- *        We only set a flag (and possibly a brief lockout) to avoid double counting.
- */
 void IRAM_ATTR geigerPulseISR()
 {
     unsigned long nowMs = millis();
@@ -306,9 +336,6 @@ void IRAM_ATTR geigerPulseISR()
     }
 }
 
-/*******************************************************************************
- * Buzzer
- ******************************************************************************/
 void initBuzzer()
 {
     pinMode(BUZZER_PIN, OUTPUT);
@@ -316,38 +343,23 @@ void initBuzzer()
     Serial.println("Buzzer initialized.");
 }
 
-/*******************************************************************************
- * Main-Loop Handling of New Pulses
- ******************************************************************************/
-
-/**
- * @brief If the ISR indicated new pulses, we record them in 'events' and beep.
- *        Because we can't safely call tone() in the ISR, we do it here.
- */
 void handleNewPulses()
 {
     if(newPulseFlag)
     {
-        // Clear the flag first to handle multiple pulses
         newPulseFlag = false;
-
-        // Record the event
         unsigned long now = millis();
         events.push_back(now);
         totalCounts++;
 
-        // Buzzer beep
-        //tone(BUZZER_PIN, BEEP_FREQ, BEEP_MS);
+        // Uncomment if tone() is available to produce a beep:
+        // tone(BUZZER_PIN, BEEP_FREQ, BEEP_MS);
     }
 }
 
-/*******************************************************************************
- * Implementation - Rolling CPM & Stats
- ******************************************************************************/
-
-/**
- * @brief Remove pulses older than 60,000 ms to maintain 1-min window
- */
+//////////////////////////////////////////////////////////////////////////////
+// Rolling CPM & Dose Statistics
+//////////////////////////////////////////////////////////////////////////////
 void removeOldEvents()
 {
     unsigned long now = millis();
@@ -357,25 +369,17 @@ void removeOldEvents()
     }
 }
 
-/**
- * @brief Return how many pulses in the last 60 seconds
- */
 float getRealTimeCPM()
 {
     return (float)events.size();
 }
 
-/**
- * @brief Compute current, average, max, cumulative dose
- * @param cpm   counts per minute from getRealTimeCPM()
- * @param dtSec time since last loop
- */
 void updateRealTimeStats(float cpm, float dtSec)
 {
-    // 1) Current reading
+    // Current reading
     currentuSvHr = cpm / CONVERSION_FACTOR;
 
-    // 2) Average
+    // Average reading
     unsigned long now = millis();
     float totalTimeMin = (float)(now - startTime) / 60000.0f;
     if(totalTimeMin > 0.0f)
@@ -384,151 +388,220 @@ void updateRealTimeStats(float cpm, float dtSec)
         averageuSvHr = avgCPM / CONVERSION_FACTOR;
     }
 
-    // 3) Max
+    // Maximum reading
     if(currentuSvHr > maxuSvHr)
     {
         maxuSvHr = currentuSvHr;
     }
 
-    // 4) Cumulative
-    // currentuSvHr => µSv/h => /3600 => µSv/s => * dtSec => µSv => /1000 => mSv
+    // Cumulative dose (µSv/h → mSv)
     float doseIncrement_mSv = (currentuSvHr / 3600.0f) * dtSec / 1000.0f;
     cumulativeDosemSv += doseIncrement_mSv;
 }
 
-/*******************************************************************************
- * Implementation - Label Updates
- ******************************************************************************/
-
-/**
- * @brief Convert floats to text and set them in LVGL labels
- */
+//////////////////////////////////////////////////////////////////////////////
+// Radiation Label Updates
+//////////////////////////////////////////////////////////////////////////////
 void updateLabels()
 {
     char buffer[16];
 
-    // Current
     snprintf(buffer, sizeof(buffer), "%.2f", currentuSvHr);
     lv_label_set_text(ui_CurrentRad, buffer);
 
-    // Average
     snprintf(buffer, sizeof(buffer), "%.2f", averageuSvHr);
     lv_label_set_text(ui_AverageRad, buffer);
 
-    // Max
     snprintf(buffer, sizeof(buffer), "%.2f", maxuSvHr);
     lv_label_set_text(ui_MaximumRad, buffer);
 
-    // Cumulative
     snprintf(buffer, sizeof(buffer), "%.2f", cumulativeDosemSv);
     lv_label_set_text(ui_CumulativeRad, buffer);
 }
 
-/*******************************************************************************
- * Implementation - Chart Updates (Single Series)
- ******************************************************************************/
-
-/**
- * @brief Called once per minute. Accumulates partial sums for each chart
- *        and finalizes the last bar after 3 min (Chart1) or 60 min (Chart3).
- */
+//////////////////////////////////////////////////////////////////////////////
+// Chart Updates
+//////////////////////////////////////////////////////////////////////////////
 void updateChartsEveryMinute()
 {
     static unsigned long lastMinuteMark = 0;
     unsigned long now = millis();
 
     if((now - lastMinuteMark) < 60000UL)
-        return; // not a new minute yet
+        return; // wait for a full minute
 
     lastMinuteMark = now;
 
-    // Accumulate partial sums
     partialSum3Min  += currentuSvHr;
     partialSum60Min += currentuSvHr;
-
     minuteCount3++;
     hourCount++;
 
-    // 3-minute segment done?
+    // Finalize a 3-minute segment for Chart1
     if(minuteCount3 >= CHART1_SEGMENT_MIN)
     {
         float finalAvg = (minuteCount3 > 0) ? (partialSum3Min / (float)minuteCount3) : 0.0f;
-
         shiftChart1Left();
         chart1Data[CHART1_SEGMENTS - 1] = finalAvg;
-
-        // Update ui_Chart1
-        for(int i=0; i<CHART1_SEGMENTS; i++){
+        for (int i = 0; i < CHART1_SEGMENTS; i++){
             lv_chart_set_value_by_id(ui_Chart1, chart1Series, i, (lv_coord_t)chart1Data[i]);
         }
         lv_chart_refresh(ui_Chart1);
-
         partialSum3Min = 0.0f;
         minuteCount3   = 0;
     }
 
-    // 60-minute segment done?
+    // Finalize a 60-minute segment for Chart3
     if(hourCount >= 60)
     {
         float finalAvg = (hourCount > 0) ? (partialSum60Min / (float)hourCount) : 0.0f;
-
         shiftChart3Left();
         chart3Data[CHART3_SEGMENTS - 1] = finalAvg;
-
-        // Update ui_Chart3
-        for(int i=0; i<CHART3_SEGMENTS; i++){
+        for (int i = 0; i < CHART3_SEGMENTS; i++){
             lv_chart_set_value_by_id(ui_Chart3, chart3Series, i, (lv_coord_t)chart3Data[i]);
         }
         lv_chart_refresh(ui_Chart3);
-
         partialSum60Min = 0.0f;
         hourCount       = 0;
     }
 }
 
-/**
- * @brief Continuously update the last bar with a partial average
- *        for the in-progress segment (3 min or 60 min).
- */
 void updateChart1RealTime()
 {
-    float partialAvg = 0.0f;
-    if(minuteCount3 > 0){
-        partialAvg = partialSum3Min / (float)minuteCount3;
-    }
+    float partialAvg = (minuteCount3 > 0) ? (partialSum3Min / (float)minuteCount3) : 0.0f;
     chart1Data[CHART1_SEGMENTS - 1] = partialAvg;
-
     lv_chart_set_value_by_id(ui_Chart1, chart1Series, CHART1_SEGMENTS - 1, (lv_coord_t)partialAvg);
     lv_chart_refresh(ui_Chart1);
 }
 
 void updateChart3RealTime()
 {
-    float partialAvg = 0.0f;
-    if(hourCount > 0){
-        partialAvg = partialSum60Min / (float)hourCount;
-    }
+    float partialAvg = (hourCount > 0) ? (partialSum60Min / (float)hourCount) : 0.0f;
     chart3Data[CHART3_SEGMENTS - 1] = partialAvg;
-
     lv_chart_set_value_by_id(ui_Chart3, chart3Series, CHART3_SEGMENTS - 1, (lv_coord_t)partialAvg);
     lv_chart_refresh(ui_Chart3);
 }
 
-/*******************************************************************************
- * Implementation - Shift Data
- ******************************************************************************/
+//////////////////////////////////////////////////////////////////////////////
+// Data Shifting for Charts
+//////////////////////////////////////////////////////////////////////////////
 void shiftChart1Left()
 {
-    for(int i=0; i < CHART1_SEGMENTS-1; i++){
-        chart1Data[i] = chart1Data[i+1];
+    for (int i = 0; i < CHART1_SEGMENTS - 1; i++){
+        chart1Data[i] = chart1Data[i + 1];
     }
     chart1Data[CHART1_SEGMENTS - 1] = 0.0f;
 }
 
 void shiftChart3Left()
 {
-    for(int i=0; i < CHART3_SEGMENTS-1; i++){
-        chart3Data[i] = chart3Data[i+1];
+    for (int i = 0; i < CHART3_SEGMENTS - 1; i++){
+        chart3Data[i] = chart3Data[i + 1];
     }
     chart3Data[CHART3_SEGMENTS - 1] = 0.0f;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// WiFi Connect Button Event Callback
+// Reads SSID and Password from ui_SSID and ui_PASSWORD, attempts a WiFi connection,
+// stores the credentials in EEPROM if successful, and updates ui_WIFIINFO.
+//////////////////////////////////////////////////////////////////////////////
+static void connect_btn_event_cb(lv_event_t *e) {
+    const char* ssid = lv_textarea_get_text(ui_SSID);
+    const char* password = lv_textarea_get_text(ui_PASSWORD);
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+
+    // Update UI to indicate connection attempt
+    lv_label_set_text(ui_WIFIINFO, "Connecting...");
+
+    // Start WiFi connection
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+
+    // Wait (up to 10 seconds) for connection
+    int max_attempts = 20;  // 20 x 500ms = 10 seconds
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < max_attempts) {
+        delay(500);
+        attempts++;
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("WiFi connected.");
+        wifi_ip = WiFi.localIP().toString(); // Store IP for continuous updates
+
+        // Save credentials to EEPROM
+        strncpy(wifiCred.ssid, ssid, MAX_SSID_LEN);
+        strncpy(wifiCred.password, password, MAX_PASS_LEN);
+        EEPROM.put(0, wifiCred);
+        EEPROM.commit();
+
+        // Initialize NTP time
+        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+        struct tm timeinfo;
+        if (getLocalTime(&timeinfo)) {
+            char timeStr[64];
+            strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+            String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
+            lv_label_set_text(ui_WIFIINFO, info.c_str());
+            Serial.println(info);
+        } else {
+            String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
+            lv_label_set_text(ui_WIFIINFO, info.c_str());
+            Serial.println(info);
+        }
+    } else {
+        Serial.println("WiFi connection failed.");
+        lv_label_set_text(ui_WIFIINFO, "Disconnected\nFailed");
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// tryAutoConnect()
+// Reads stored credentials from EEPROM and, if valid, tries to connect.
+//////////////////////////////////////////////////////////////////////////////
+void tryAutoConnect() {
+    // Read the stored credentials from EEPROM
+    EEPROM.get(0, wifiCred);
+
+    // Check if the stored SSID is non-empty
+    if (wifiCred.ssid[0] != '\0') {
+        Serial.print("Found saved credentials. Trying to connect to: ");
+        Serial.println(wifiCred.ssid);
+
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(wifiCred.ssid, wifiCred.password);
+
+        // Wait (up to 10 seconds) for connection
+        int max_attempts = 20;
+        int attempts = 0;
+        while (WiFi.status() != WL_CONNECTED && attempts < max_attempts) {
+            delay(500);
+            attempts++;
+        }
+
+        if (WiFi.status() == WL_CONNECTED) {
+            Serial.println("Auto WiFi connection successful.");
+            wifi_ip = WiFi.localIP().toString();
+
+            // Initialize NTP time
+            configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+            struct tm timeinfo;
+            if (getLocalTime(&timeinfo)) {
+                char timeStr[64];
+                strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+                String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
+                lv_label_set_text(ui_WIFIINFO, info.c_str());
+                Serial.println(info);
+            } else {
+                String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
+                lv_label_set_text(ui_WIFIINFO, info.c_str());
+                Serial.println(info);
+            }
+        } else {
+            Serial.println("Auto WiFi connection failed.");
+            lv_label_set_text(ui_WIFIINFO, "Disconnected\nFailed");
+        }
+    }
 }

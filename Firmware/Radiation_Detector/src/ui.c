@@ -116,7 +116,6 @@ lv_obj_t * ui_Label26;
 
 // SCREEN: ui_Settings
 void ui_Settings_screen_init(void);
-void ui_event_Settings(lv_event_t * e);
 lv_obj_t * ui_Settings;
 lv_obj_t * ui_Panel4;
 lv_obj_t * ui_Container4;
@@ -127,19 +126,24 @@ lv_obj_t * ui_Button17;
 void ui_event_Button18(lv_event_t * e);
 lv_obj_t * ui_Button18;
 lv_obj_t * ui_Button19;
-void ui_event_TextArea2(lv_event_t * e);
-lv_obj_t * ui_TextArea2;
-void ui_event_TextArea1(lv_event_t * e);
-lv_obj_t * ui_TextArea1;
 lv_obj_t * ui_Panel11;
 lv_obj_t * ui_Label14;
 lv_obj_t * ui_Label15;
 lv_obj_t * ui_Label16;
 lv_obj_t * ui_Slider2;
 lv_obj_t * ui_Slider1;
+void ui_event_Keyboard(lv_event_t * e);
 lv_obj_t * ui_Keyboard;
 lv_obj_t * ui_Panel12;
-lv_obj_t * ui_Label17;
+lv_obj_t * ui_WIFIINFO;
+void ui_event_Container10(lv_event_t * e);
+lv_obj_t * ui_Container10;
+void ui_event_PASSWORD(lv_event_t * e);
+lv_obj_t * ui_PASSWORD;
+void ui_event_SSID(lv_event_t * e);
+lv_obj_t * ui_SSID;
+lv_obj_t * ui_Connect;
+lv_obj_t * ui_Label18;
 // CUSTOM VARIABLES
 
 
@@ -358,15 +362,6 @@ void ui_event_Button15(lv_event_t * e)
     }
 }
 
-void ui_event_Settings(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        KeyboardHide_Animation(ui_Keyboard, 0);
-    }
-}
-
 void ui_event_Button16(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -394,23 +389,41 @@ void ui_event_Button18(lv_event_t * e)
     }
 }
 
-void ui_event_TextArea2(lv_event_t * e)
+void ui_event_Keyboard(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM) {
+        lv_indev_wait_release(lv_indev_get_act());
+        KeyboardHide_Animation(ui_Keyboard, 0);
+    }
+}
+
+void ui_event_Container10(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_FOCUSED) {
-        _ui_keyboard_set_target(ui_Keyboard,  ui_TextArea2);
         KeyboardPopup_Animation(ui_Keyboard, 0);
     }
 }
 
-void ui_event_TextArea1(lv_event_t * e)
+void ui_event_PASSWORD(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_FOCUSED) {
-        _ui_keyboard_set_target(ui_Keyboard,  ui_TextArea1);
+        _ui_keyboard_set_target(ui_Keyboard,  ui_PASSWORD);
+    }
+}
+
+void ui_event_SSID(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
         KeyboardPopup_Animation(ui_Keyboard, 0);
+        _ui_keyboard_set_target(ui_Keyboard,  ui_SSID);
     }
 }
 

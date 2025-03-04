@@ -79,31 +79,6 @@ void ui_Settings_screen_init(void)
     lv_obj_set_style_bg_opa(ui_Button19, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_img_src(ui_Button19, &ui_img_settings_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_TextArea2 = lv_textarea_create(ui_Settings);
-    lv_obj_set_width(ui_TextArea2, 150);
-    lv_obj_set_height(ui_TextArea2, 43);
-    lv_obj_set_x(ui_TextArea2, 40);
-    lv_obj_set_y(ui_TextArea2, -51);
-    lv_obj_set_align(ui_TextArea2, LV_ALIGN_LEFT_MID);
-    lv_textarea_set_placeholder_text(ui_TextArea2, "SSID");
-    lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0x959595), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_TextArea2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-
-
-    ui_TextArea1 = lv_textarea_create(ui_Settings);
-    lv_obj_set_width(ui_TextArea1, 150);
-    lv_obj_set_height(ui_TextArea1, 43);
-    lv_obj_set_x(ui_TextArea1, 40);
-    lv_obj_set_y(ui_TextArea1, -1);
-    lv_obj_set_align(ui_TextArea1, LV_ALIGN_LEFT_MID);
-    lv_textarea_set_placeholder_text(ui_TextArea1, "Password");
-    lv_textarea_set_password_mode(ui_TextArea1, true);
-    lv_obj_set_style_bg_color(ui_TextArea1, lv_color_hex(0x959595), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_TextArea1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-
-
     ui_Panel11 = lv_obj_create(ui_Settings);
     lv_obj_set_width(ui_Panel11, 480);
     lv_obj_set_height(ui_Panel11, 2);
@@ -183,27 +158,78 @@ void ui_Settings_screen_init(void)
 
     ui_Panel12 = lv_obj_create(ui_Settings);
     lv_obj_set_width(ui_Panel12, 247);
-    lv_obj_set_height(ui_Panel12, 97);
-    lv_obj_set_x(ui_Panel12, 96);
-    lv_obj_set_y(ui_Panel12, -26);
+    lv_obj_set_height(ui_Panel12, 50);
+    lv_obj_set_x(ui_Panel12, 90);
+    lv_obj_set_y(ui_Panel12, -47);
     lv_obj_set_align(ui_Panel12, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_Panel12, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Panel12, lv_color_hex(0x0E0E0E), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Panel12, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label17 = lv_label_create(ui_Panel12);
-    lv_obj_set_width(ui_Label17, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label17, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label17, -6);
-    lv_obj_set_y(ui_Label17, 0);
-    lv_obj_set_align(ui_Label17, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label17, "Status: Connected\nIP Address: 192.168.1.100\nPing Test: Success\nLatency: 32 ms");
+    ui_WIFIINFO = lv_label_create(ui_Panel12);
+    lv_obj_set_width(ui_WIFIINFO, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_WIFIINFO, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_WIFIINFO, -10);
+    lv_obj_set_y(ui_WIFIINFO, -11);
+    lv_label_set_text(ui_WIFIINFO, "Disconected");
+
+    ui_Container10 = lv_obj_create(ui_Settings);
+    lv_obj_remove_style_all(ui_Container10);
+    lv_obj_set_width(ui_Container10, 153);
+    lv_obj_set_height(ui_Container10, 90);
+    lv_obj_set_x(ui_Container10, -130);
+    lv_obj_set_y(ui_Container10, -24);
+    lv_obj_set_align(ui_Container10, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Container10, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_PASSWORD = lv_textarea_create(ui_Container10);
+    lv_obj_set_width(ui_PASSWORD, 150);
+    lv_obj_set_height(ui_PASSWORD, 43);
+    lv_obj_set_x(ui_PASSWORD, 0);
+    lv_obj_set_y(ui_PASSWORD, 20);
+    lv_obj_set_align(ui_PASSWORD, LV_ALIGN_LEFT_MID);
+    lv_textarea_set_placeholder_text(ui_PASSWORD, "Password");
+    lv_textarea_set_password_mode(ui_PASSWORD, true);
+    lv_obj_set_style_bg_color(ui_PASSWORD, lv_color_hex(0x959595), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PASSWORD, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
+
+    ui_SSID = lv_textarea_create(ui_Container10);
+    lv_obj_set_width(ui_SSID, 150);
+    lv_obj_set_height(ui_SSID, 43);
+    lv_obj_set_x(ui_SSID, 0);
+    lv_obj_set_y(ui_SSID, -25);
+    lv_obj_set_align(ui_SSID, LV_ALIGN_LEFT_MID);
+    lv_textarea_set_placeholder_text(ui_SSID, "SSID");
+    lv_obj_set_style_bg_color(ui_SSID, lv_color_hex(0x959595), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_SSID, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
+
+    ui_Connect = lv_btn_create(ui_Settings);
+    lv_obj_set_width(ui_Connect, 100);
+    lv_obj_set_height(ui_Connect, 30);
+    lv_obj_set_x(ui_Connect, 90);
+    lv_obj_set_y(ui_Connect, 0);
+    lv_obj_set_align(ui_Connect, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Connect, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_Connect, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Connect, lv_color_hex(0x93FFA7), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Connect, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label18 = lv_label_create(ui_Connect);
+    lv_obj_set_width(ui_Label18, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label18, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Label18, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label18, "Connect");
 
     lv_obj_add_event_cb(ui_Button16, ui_event_Button16, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button17, ui_event_Button17, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button18, ui_event_Button18, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_TextArea1, ui_event_TextArea1, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Settings, ui_event_Settings, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Keyboard, ui_event_Keyboard, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PASSWORD, ui_event_PASSWORD, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_SSID, ui_event_SSID, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Container10, ui_event_Container10, LV_EVENT_ALL, NULL);
 
 }
