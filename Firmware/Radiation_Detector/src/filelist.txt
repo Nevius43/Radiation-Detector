@@ -5,6 +5,7 @@ ui_VoltageScreen.c
 ui_Settings.c
 ui_Charts24h.c
 ui_ChartsSpectrum.c
+ui_Startup.c
 ui.c
 ui_comp_hook.c
 ui_helpers.c

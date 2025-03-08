@@ -115,39 +115,41 @@ void ui_Settings_screen_init(void)
     lv_obj_set_align(ui_Label16, LV_ALIGN_LEFT_MID);
     lv_label_set_text(ui_Label16, "Cumulative Alarm");
 
-    ui_Slider2 = lv_slider_create(ui_Settings);
-    lv_slider_set_value(ui_Slider2, 50, LV_ANIM_OFF);
-    if(lv_slider_get_mode(ui_Slider2) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_Slider2, 0, LV_ANIM_OFF);
-    lv_obj_set_width(ui_Slider2, 400);
-    lv_obj_set_height(ui_Slider2, 10);
-    lv_obj_set_x(ui_Slider2, 0);
-    lv_obj_set_y(ui_Slider2, 140);
-    lv_obj_set_align(ui_Slider2, LV_ALIGN_CENTER);
-    lv_obj_set_style_bg_color(ui_Slider2, lv_color_hex(0xFFA1A1), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_CumulativeAlarmSlider = lv_slider_create(ui_Settings);
+    lv_slider_set_value(ui_CumulativeAlarmSlider, 50, LV_ANIM_OFF);
+    if(lv_slider_get_mode(ui_CumulativeAlarmSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(
+            ui_CumulativeAlarmSlider, 0, LV_ANIM_OFF);
+    lv_obj_set_width(ui_CumulativeAlarmSlider, 400);
+    lv_obj_set_height(ui_CumulativeAlarmSlider, 10);
+    lv_obj_set_x(ui_CumulativeAlarmSlider, 0);
+    lv_obj_set_y(ui_CumulativeAlarmSlider, 140);
+    lv_obj_set_align(ui_CumulativeAlarmSlider, LV_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_CumulativeAlarmSlider, lv_color_hex(0xFFA1A1), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CumulativeAlarmSlider, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_Slider2, lv_color_hex(0xFF3434), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider2, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_CumulativeAlarmSlider, lv_color_hex(0xFF3434), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CumulativeAlarmSlider, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_Slider2, lv_color_hex(0xFF4848), LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider2, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_CumulativeAlarmSlider, lv_color_hex(0xFF4848), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CumulativeAlarmSlider, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
 
-    ui_Slider1 = lv_slider_create(ui_Settings);
-    lv_slider_set_value(ui_Slider1, 50, LV_ANIM_OFF);
-    if(lv_slider_get_mode(ui_Slider1) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_Slider1, 0, LV_ANIM_OFF);
-    lv_obj_set_width(ui_Slider1, 400);
-    lv_obj_set_height(ui_Slider1, 10);
-    lv_obj_set_x(ui_Slider1, 0);
-    lv_obj_set_y(ui_Slider1, 90);
-    lv_obj_set_align(ui_Slider1, LV_ALIGN_CENTER);
-    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xFFA1A1), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_CurrentAlarmSlider = lv_slider_create(ui_Settings);
+    lv_slider_set_value(ui_CurrentAlarmSlider, 50, LV_ANIM_OFF);
+    if(lv_slider_get_mode(ui_CurrentAlarmSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_CurrentAlarmSlider, 0,
+                                                                                                       LV_ANIM_OFF);
+    lv_obj_set_width(ui_CurrentAlarmSlider, 400);
+    lv_obj_set_height(ui_CurrentAlarmSlider, 10);
+    lv_obj_set_x(ui_CurrentAlarmSlider, 0);
+    lv_obj_set_y(ui_CurrentAlarmSlider, 90);
+    lv_obj_set_align(ui_CurrentAlarmSlider, LV_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_CurrentAlarmSlider, lv_color_hex(0xFFA1A1), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CurrentAlarmSlider, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xFF3434), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider1, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_CurrentAlarmSlider, lv_color_hex(0xFF3434), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CurrentAlarmSlider, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xFF4848), LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Slider1, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_CurrentAlarmSlider, lv_color_hex(0xFF4848), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_CurrentAlarmSlider, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui_Keyboard = lv_keyboard_create(ui_Settings);
     lv_obj_set_width(ui_Keyboard, 480);
@@ -158,9 +160,9 @@ void ui_Settings_screen_init(void)
 
     ui_Panel12 = lv_obj_create(ui_Settings);
     lv_obj_set_width(ui_Panel12, 247);
-    lv_obj_set_height(ui_Panel12, 50);
-    lv_obj_set_x(ui_Panel12, 90);
-    lv_obj_set_y(ui_Panel12, -47);
+    lv_obj_set_height(ui_Panel12, 43);
+    lv_obj_set_x(ui_Panel12, 96);
+    lv_obj_set_y(ui_Panel12, -49);
     lv_obj_set_align(ui_Panel12, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_Panel12, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Panel12, lv_color_hex(0x0E0E0E), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -169,9 +171,9 @@ void ui_Settings_screen_init(void)
     ui_WIFIINFO = lv_label_create(ui_Panel12);
     lv_obj_set_width(ui_WIFIINFO, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_WIFIINFO, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_WIFIINFO, -10);
-    lv_obj_set_y(ui_WIFIINFO, -11);
-    lv_label_set_text(ui_WIFIINFO, "Disconected");
+    lv_obj_set_x(ui_WIFIINFO, -6);
+    lv_obj_set_y(ui_WIFIINFO, -12);
+    lv_label_set_text(ui_WIFIINFO, "Disconnected\n");
 
     ui_Container10 = lv_obj_create(ui_Settings);
     lv_obj_remove_style_all(ui_Container10);
@@ -208,14 +210,14 @@ void ui_Settings_screen_init(void)
 
 
     ui_Connect = lv_btn_create(ui_Settings);
-    lv_obj_set_width(ui_Connect, 100);
-    lv_obj_set_height(ui_Connect, 30);
-    lv_obj_set_x(ui_Connect, 90);
+    lv_obj_set_width(ui_Connect, 80);
+    lv_obj_set_height(ui_Connect, 20);
+    lv_obj_set_x(ui_Connect, 18);
     lv_obj_set_y(ui_Connect, 0);
     lv_obj_set_align(ui_Connect, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Connect, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_Connect, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Connect, lv_color_hex(0x93FFA7), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Connect, lv_color_hex(0x7DFF8F), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Connect, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label18 = lv_label_create(ui_Connect);
@@ -223,6 +225,16 @@ void ui_Settings_screen_init(void)
     lv_obj_set_height(ui_Label18, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label18, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label18, "Connect");
+
+    ui_OnStartup = lv_checkbox_create(ui_Settings);
+    lv_checkbox_set_text(ui_OnStartup, "Connect On Startup");
+    lv_obj_set_width(ui_OnStartup, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_OnStartup, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_OnStartup, 143);
+    lv_obj_set_y(ui_OnStartup, 0);
+    lv_obj_set_align(ui_OnStartup, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_OnStartup, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_OnStartup, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Button16, ui_event_Button16, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button17, ui_event_Button17, LV_EVENT_ALL, NULL);

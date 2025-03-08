@@ -39,8 +39,8 @@ lv_obj_t * ui_Button7;
 lv_obj_t * ui_AverageRad;
 lv_obj_t * ui_CumulativeRad;
 lv_obj_t * ui_MaximumRad;
-lv_obj_t * ui_CumulativeAlarm;
-lv_obj_t * ui_CurrentAlarm;
+lv_obj_t * ui_CumulativeAlarmLabel;
+lv_obj_t * ui_CurrentAlarmLabel;
 lv_obj_t * ui_Button37;
 lv_obj_t * ui_CurrentRad;
 lv_obj_t * ui_Panel5;
@@ -130,8 +130,8 @@ lv_obj_t * ui_Panel11;
 lv_obj_t * ui_Label14;
 lv_obj_t * ui_Label15;
 lv_obj_t * ui_Label16;
-lv_obj_t * ui_Slider2;
-lv_obj_t * ui_Slider1;
+lv_obj_t * ui_CumulativeAlarmSlider;
+lv_obj_t * ui_CurrentAlarmSlider;
 void ui_event_Keyboard(lv_event_t * e);
 lv_obj_t * ui_Keyboard;
 lv_obj_t * ui_Panel12;
@@ -144,6 +144,7 @@ void ui_event_SSID(lv_event_t * e);
 lv_obj_t * ui_SSID;
 lv_obj_t * ui_Connect;
 lv_obj_t * ui_Label18;
+lv_obj_t * ui_OnStartup;
 // CUSTOM VARIABLES
 
 
@@ -192,6 +193,14 @@ void ui_event_Button36(lv_event_t * e);
 lv_obj_t * ui_Button36;
 lv_obj_t * ui_Label13;
 lv_obj_t * ui_Chart4;
+// CUSTOM VARIABLES
+
+
+// SCREEN: ui_Startup
+void ui_Startup_screen_init(void);
+lv_obj_t * ui_Startup;
+lv_obj_t * ui_Spinner1;
+lv_obj_t * ui_Label19;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -532,6 +541,7 @@ void ui_init(void)
     ui_Settings_screen_init();
     ui_Charts24h_screen_init();
     ui_ChartsSpectrum_screen_init();
+    ui_Startup_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_InitialScreen);
 }

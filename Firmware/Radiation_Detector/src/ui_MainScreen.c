@@ -106,27 +106,27 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_opa(ui_MaximumRad, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_MaximumRad, &ui_font_Pixel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_CumulativeAlarm = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_CumulativeAlarm, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_CumulativeAlarm, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_CumulativeAlarm, 151);
-    lv_obj_set_y(ui_CumulativeAlarm, 17);
-    lv_obj_set_align(ui_CumulativeAlarm, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_CumulativeAlarm, "005.00");
-    lv_obj_set_style_text_color(ui_CumulativeAlarm, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_CumulativeAlarm, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_CumulativeAlarm, &ui_font_Pixel_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_CumulativeAlarmLabel = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_CumulativeAlarmLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_CumulativeAlarmLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_CumulativeAlarmLabel, 151);
+    lv_obj_set_y(ui_CumulativeAlarmLabel, 17);
+    lv_obj_set_align(ui_CumulativeAlarmLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CumulativeAlarmLabel, "005.00");
+    lv_obj_set_style_text_color(ui_CumulativeAlarmLabel, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_CumulativeAlarmLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_CumulativeAlarmLabel, &ui_font_Pixel_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_CurrentAlarm = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_CurrentAlarm, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_CurrentAlarm, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_CurrentAlarm, 149);
-    lv_obj_set_y(ui_CurrentAlarm, -64);
-    lv_obj_set_align(ui_CurrentAlarm, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_CurrentAlarm, "010.00");
-    lv_obj_set_style_text_color(ui_CurrentAlarm, lv_color_hex(0x00F701), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_CurrentAlarm, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_CurrentAlarm, &ui_font_Pixel_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_CurrentAlarmLabel = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_CurrentAlarmLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_CurrentAlarmLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_CurrentAlarmLabel, 149);
+    lv_obj_set_y(ui_CurrentAlarmLabel, -64);
+    lv_obj_set_align(ui_CurrentAlarmLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CurrentAlarmLabel, "010.00");
+    lv_obj_set_style_text_color(ui_CurrentAlarmLabel, lv_color_hex(0x00F701), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_CurrentAlarmLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_CurrentAlarmLabel, &ui_font_Pixel_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button37 = lv_btn_create(ui_MainScreen);
     lv_obj_set_width(ui_Button37, 40);

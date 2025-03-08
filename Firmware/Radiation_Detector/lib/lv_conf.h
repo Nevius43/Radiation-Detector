@@ -560,7 +560,7 @@
 
 #define LV_USE_SPINBOX    0
 
-#define LV_USE_SPINNER    0
+#define LV_USE_SPINNER    1
 
 #define LV_USE_TABVIEW    0
 

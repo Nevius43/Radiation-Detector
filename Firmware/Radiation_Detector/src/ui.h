@@ -55,8 +55,8 @@ extern lv_obj_t * ui_Button7;
 extern lv_obj_t * ui_AverageRad;
 extern lv_obj_t * ui_CumulativeRad;
 extern lv_obj_t * ui_MaximumRad;
-extern lv_obj_t * ui_CumulativeAlarm;
-extern lv_obj_t * ui_CurrentAlarm;
+extern lv_obj_t * ui_CumulativeAlarmLabel;
+extern lv_obj_t * ui_CurrentAlarmLabel;
 extern lv_obj_t * ui_Button37;
 extern lv_obj_t * ui_CurrentRad;
 extern lv_obj_t * ui_Panel5;
@@ -143,8 +143,8 @@ extern lv_obj_t * ui_Panel11;
 extern lv_obj_t * ui_Label14;
 extern lv_obj_t * ui_Label15;
 extern lv_obj_t * ui_Label16;
-extern lv_obj_t * ui_Slider2;
-extern lv_obj_t * ui_Slider1;
+extern lv_obj_t * ui_CumulativeAlarmSlider;
+extern lv_obj_t * ui_CurrentAlarmSlider;
 void ui_event_Keyboard(lv_event_t * e);
 extern lv_obj_t * ui_Keyboard;
 extern lv_obj_t * ui_Panel12;
@@ -157,6 +157,7 @@ void ui_event_SSID(lv_event_t * e);
 extern lv_obj_t * ui_SSID;
 extern lv_obj_t * ui_Connect;
 extern lv_obj_t * ui_Label18;
+extern lv_obj_t * ui_OnStartup;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Charts24h
@@ -203,6 +204,13 @@ void ui_event_Button36(lv_event_t * e);
 extern lv_obj_t * ui_Button36;
 extern lv_obj_t * ui_Label13;
 extern lv_obj_t * ui_Chart4;
+// CUSTOM VARIABLES
+
+// SCREEN: ui_Startup
+void ui_Startup_screen_init(void);
+extern lv_obj_t * ui_Startup;
+extern lv_obj_t * ui_Spinner1;
+extern lv_obj_t * ui_Label19;
 // CUSTOM VARIABLES
 
 // EVENTS
