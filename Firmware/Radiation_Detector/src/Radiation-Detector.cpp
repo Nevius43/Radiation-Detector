@@ -13,6 +13,10 @@
 #include <WiFi.h>
 #include <time.h>
 #include <Preferences.h>
+#include "dashboard.h"
+// OTA includes
+#include <WebServer.h>
+#include <ElegantOTA.h>
 
 /*******************************************************************************
  * Definitions & Constants
@@ -47,10 +51,10 @@ static unsigned long totalCounts = 0;
 static unsigned long startTime   = 0;
 static unsigned long lastLoop    = 0;
 
-static float currentuSvHr      = 0.0f;
-static float averageuSvHr      = 0.0f;
-static float maxuSvHr          = 0.0f;
-static float cumulativeDosemSv = 0.0f;
+float currentuSvHr      = 0.0f;
+float averageuSvHr      = 0.0f;
+float maxuSvHr          = 0.0f;
+float cumulativeDosemSv = 0.0f;
 
 static float chart1Data[CHART1_SEGMENTS] = {0.0f};
 static float chart3Data[CHART3_SEGMENTS] = {0.0f};
@@ -91,6 +95,10 @@ static const unsigned long PULSE_LOCKOUT_MS  = 5;
 // Preferences (for storing WiFi credentials and settings)
 Preferences preferences;
 static String wifi_ip = "";
+
+// OTA support global variables
+WebServer server(80);
+bool otaInitialized = false;
 
 /*******************************************************************************
  * Function Prototypes
@@ -273,6 +281,11 @@ void loop() {
             lv_label_set_text(ui_WIFIINFO, info.c_str());
         }
     }
+
+    // Handle OTA update requests.
+    if (otaInitialized) {
+        server.handleClient();
+    }
 }
 
 /*******************************************************************************
@@ -287,7 +300,7 @@ void initTFT() {
     static TFT_eSPI tft(SCREEN_WIDTH, SCREEN_HEIGHT);
     tft.begin();
     tft.setRotation(1);
-    uint16_t calData[5] = {267, 3646, 198, 3669, 6};
+    uint16_t calData[5] = { 300, 3597, 187, 3579, 6 };
     tft.setTouch(calData);
     Serial.println("TFT initialized.");
 }
@@ -512,6 +525,19 @@ static void connect_btn_event_cb(lv_event_t *e) {
             lv_label_set_text(ui_WIFIINFO, info.c_str());
             Serial.println(info);
         }
+        // Initialize OTA if not already done
+        if (!otaInitialized) {
+            server.begin();
+            ElegantOTA.begin(&server);
+            otaInitialized = true;
+            Serial.println("OTA initialized.");
+            
+            // Define the route for the dashboard.
+            server.on("/", [](){
+                String dashboard = getDashboardPage();
+                server.send(200, "text/html", dashboard);
+            });
+        }  // <-- Missing bracket fixed here.
     } else {
         Serial.println("WiFi connection failed.");
         lv_label_set_text(ui_WIFIINFO, "Disconnected\nFailed");
@@ -549,6 +575,19 @@ void tryAutoConnect() {
                 String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
                 lv_label_set_text(ui_WIFIINFO, info.c_str());
                 Serial.println(info);
+            }
+            // Initialize OTA if not already done
+            if (!otaInitialized) {
+                server.begin();
+                ElegantOTA.begin(&server);
+                otaInitialized = true;
+                Serial.println("OTA initialized.");
+                
+                // Define the route for the dashboard.
+                server.on("/", [](){
+                    String dashboard = getDashboardPage();
+                    server.send(200, "text/html", dashboard);
+                });
             }
         } else {
             Serial.println("Auto WiFi connection failed.");
