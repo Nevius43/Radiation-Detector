@@ -20,6 +20,7 @@
 #include "dashboard.h"    // Function getDashboardPage()
 #include <WebServer.h>
 #include <ElegantOTA.h>
+#include <ESPmDNS.h>      // Include mDNS support
 #include "driver/pcnt.h"  // ESP32 pulse counter driver
 #include <ArduinoJson.h>
 #include "radiation_data.h" // Export radiation data to other modules
@@ -1079,6 +1080,15 @@ static void connect_btn_event_cb(lv_event_t *e) {
     if (connectToWiFi(ssid, password)) {
         Serial.println("WiFi connected.");
         wifi_ip = WiFi.localIP().toString();
+        
+        // Initialize mDNS responder
+        if (MDNS.begin("radiation")) {
+            Serial.println("mDNS responder started - Device accessible at http://radiation.local");
+            wifi_ip += "\nHostname: radiation.local";
+        } else {
+            Serial.println("Error setting up mDNS responder!");
+        }
+        
         preferences.begin("wifi", false);
         preferences.putString("ssid", ssid);
         preferences.putString("password", password);
@@ -1154,6 +1164,15 @@ void tryAutoConnect() {
         if (connectToWiFi(storedSsid.c_str(), storedPassword.c_str())) {
             Serial.println("Auto WiFi connection successful.");
             wifi_ip = WiFi.localIP().toString();
+            
+            // Initialize mDNS responder
+            if (MDNS.begin("radiation")) {
+                Serial.println("mDNS responder started - Device accessible at http://radiation.local");
+                wifi_ip += "\nHostname: radiation.local";
+            } else {
+                Serial.println("Error setting up mDNS responder!");
+            }
+            
             configTime(0, 0, "pool.ntp.org", "time.nist.gov");
             struct tm timeinfo;
             if (getLocalTime(&timeinfo)) {
