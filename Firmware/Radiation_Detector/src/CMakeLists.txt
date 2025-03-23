@@ -5,7 +5,7 @@ SET(SOURCES ui_InitialScreen.c
     ui_Settings.c
     ui_Charts24h.c
     ui_ChartsSpectrum.c
-    ui_Startup.c
+    ui_Startup_screen.c
     ui.c
     ui_comp_hook.c
     ui_helpers.c

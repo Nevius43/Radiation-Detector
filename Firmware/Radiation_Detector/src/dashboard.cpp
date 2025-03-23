@@ -6,37 +6,19 @@ extern float averageuSvHr;
 extern float maxuSvHr;
 extern float cumulativeDosemSv;
 
-// External access to chart data
+// Access to chart data - using direct access rather than extern to avoid conflicts with static declarations
+// The actual variables are defined in Radiation-Detector.cpp
 extern float chart1Buffer[];
 extern float chart3Buffer[];
-extern const int CHART1_SEGMENTS;
-extern const int CHART3_SEGMENTS;
+// Using hardcoded values to avoid linker errors
+#define CHART1_SIZE 20
+#define CHART3_SIZE 24
 
-// Helper function to format radiation data as JSON
+// Replace the getRadiationDataJson function with a wrapper that calls getRadiationDataJsonExport
+// This will keep compatibility with the existing code
 String getRadiationDataJson() {
-  String json = "{";
-  json += "\"current\":" + String(currentuSvHr) + ",";
-  json += "\"average\":" + String(averageuSvHr) + ",";
-  json += "\"maximum\":" + String(maxuSvHr) + ",";
-  json += "\"cumulative\":" + String(cumulativeDosemSv) + ",";
-  
-  // Add Chart1 data (1-hour chart with 3-minute intervals)
-  json += "\"hourly\":[";
-  for (int i = 0; i < CHART1_SEGMENTS; i++) {
-    if (i > 0) json += ",";
-    json += String(chart1Buffer[i]);
-  }
-  json += "],";
-  
-  // Add Chart3 data (24-hour chart with 1-hour intervals)
-  json += "\"daily\":[";
-  for (int i = 0; i < CHART3_SEGMENTS; i++) {
-    if (i > 0) json += ",";
-    json += String(chart3Buffer[i]);
-  }
-  json += "]}";
-  
-  return json;
+  // Use the exported function from Radiation-Detector.cpp
+  return getRadiationDataJsonExport();
 }
 
 String getDashboardPage() {
@@ -71,14 +53,28 @@ String getDashboardPage() {
   page += ".radiation-moderate { color: #FFC107; }";
   page += ".radiation-high { color: #FF5722; }";
   page += ".radiation-extreme { color: #F44336; }";
+  
+  // Status indicator styles
+  page += ".status-indicator { position: fixed; top: 10px; right: 10px; padding: 5px 10px; border-radius: 15px; font-size: 12px; }";
+  page += ".status-online { background-color: #4CAF50; color: white; }";
+  page += ".status-updating { background-color: #2196F3; color: white; }";
+  page += ".status-offline { background-color: #F44336; color: white; }";
+  page += ".last-updated { text-align: center; margin-top: 10px; font-size: 12px; color: #777; }";
+  
   page += "</style>";
   page += "</head><body>";
   
   // Header section
   page += "<header><h1>Radiation Detector Dashboard</h1></header>";
   
+  // Status indicator
+  page += "<div id='status-indicator' class='status-indicator status-online'>Online</div>";
+  
   // Main container
   page += "<div class='container'>";
+  
+  // Last updated information
+  page += "<div id='last-updated' class='last-updated'>Last updated: Never</div>";
   
   // Cards section for sensor metrics
   page += "<div class='cards'>";
@@ -167,7 +163,7 @@ String getDashboardPage() {
   
   // Create labels for hourly chart (3-minute intervals)
   page += "  const hourlyLabels = [];";
-  page += "  for (let i = 0; i < " + String(CHART1_SEGMENTS) + "; i++) {";
+  page += "  for (let i = 0; i < " + String(CHART1_SIZE) + "; i++) {";
   page += "    const mins = (i * 3) % 60;";
   page += "    const hours = Math.floor((i * 3) / 60);";
   page += "    hourlyLabels.push(`${hours}h:${mins.toString().padStart(2, '0')}m`);";
@@ -175,7 +171,7 @@ String getDashboardPage() {
   
   // Create labels for daily chart (1-hour intervals)
   page += "  const dailyLabels = [];";
-  page += "  for (let i = 0; i < " + String(CHART3_SEGMENTS) + "; i++) {";
+  page += "  for (let i = 0; i < " + String(CHART3_SIZE) + "; i++) {";
   page += "    dailyLabels.push(`${i}h`);";
   page += "  }";
   
@@ -288,9 +284,23 @@ String getDashboardPage() {
   
   // Function to refresh data via AJAX
   page += "function refreshData() {";
-  page += "  fetch('/api/data')";
-  page += "    .then(response => response.json())";
+  page += "  console.log('Refreshing data...');"; // Debug logging
+  page += "  updateStatus('updating');";
+  page += "  fetch('/api/data', {";
+  page += "    method: 'GET',";
+  page += "    headers: { 'Content-Type': 'application/json' },";
+  page += "    cache: 'no-cache'";
+  page += "  })";
+  page += "    .then(response => {";
+  page += "      if (!response.ok) {";
+  page += "        throw new Error('Network response was not ok: ' + response.status);";
+  page += "      }";
+  page += "      return response.json();";
+  page += "    })";
   page += "    .then(data => {";
+  page += "      console.log('Data received:', data);"; // Debug logging
+  page += "      updateStatus('online');";
+  page += "      updateLastUpdated();";
   // Update the values
   page += "      document.getElementById('current-radiation').textContent = data.current.toFixed(2) + ' uSv/h';";
   page += "      document.getElementById('average-radiation').textContent = data.average.toFixed(2) + ' uSv/h';";
@@ -311,14 +321,47 @@ String getDashboardPage() {
   // Update radiation level text
   page += "      updateRadiationLevelText(data.current);";
   page += "    })";
-  page += "    .catch(error => console.error('Error refreshing data:', error));";
+  page += "    .catch(error => {";
+  page += "      console.error('Error refreshing data:', error);";
+  page += "      updateStatus('offline');";
+  // Try to reconnect after a short delay
+  page += "      setTimeout(refreshData, 5000);";
+  page += "    });";
+  page += "}";
+  
+  // Function to update status indicator
+  page += "function updateStatus(status) {";
+  page += "  const indicator = document.getElementById('status-indicator');";
+  page += "  indicator.className = 'status-indicator';";
+  page += "  if (status === 'online') {";
+  page += "    indicator.classList.add('status-online');";
+  page += "    indicator.textContent = 'Online';";
+  page += "  } else if (status === 'updating') {";
+  page += "    indicator.classList.add('status-updating');";
+  page += "    indicator.textContent = 'Updating...';";
+  page += "  } else if (status === 'offline') {";
+  page += "    indicator.classList.add('status-offline');";
+  page += "    indicator.textContent = 'Offline - Reconnecting...';";
+  page += "  }";
+  page += "}";
+  
+  // Function to update the last updated timestamp
+  page += "function updateLastUpdated() {";
+  page += "  const now = new Date();";
+  page += "  const timeStr = now.toLocaleTimeString();";
+  page += "  document.getElementById('last-updated').textContent = 'Last updated: ' + timeStr;";
   page += "}";
   
   // Initialize charts on page load
-  page += "document.addEventListener('DOMContentLoaded', initCharts);";
+  page += "document.addEventListener('DOMContentLoaded', function() {";
+  page += "  updateStatus('updating');";
+  page += "  initCharts();";
+  // First refresh manually after page load
+  page += "  setTimeout(refreshData, 1000);";
+  page += "});";
   
-  // Auto-refresh every 30 seconds
-  page += "setInterval(refreshData, 30000);";
+  // Auto-refresh every 5 seconds
+  page += "setInterval(refreshData, 5000);";
   
   page += "</script>";
   
