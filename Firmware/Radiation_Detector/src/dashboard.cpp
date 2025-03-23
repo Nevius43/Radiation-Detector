@@ -144,7 +144,7 @@ String getDashboardPage() {
   // Buttons: Refresh and OTA Update
   page += "<div class='buttons'>";
   page += "<a class='btn' href='javascript:void(0)' onclick='refreshData()'>Refresh Data</a>";
-  page += "<a class='btn' href='/update'>OTA Update</a>";
+  page += "<a class='btn' href='/warning'>OTA Update</a>";
   page += "</div>";
   
   // Footer

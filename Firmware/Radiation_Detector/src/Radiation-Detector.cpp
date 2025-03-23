@@ -1037,10 +1037,12 @@ void serveOtaWarningPage() {
     warningPage += "h1 { color: #e53935; }";
     warningPage += ".warning-icon { margin-bottom: 20px; }";
     warningPage += ".warning-text { color: #333; text-align: left; margin: 20px 0; line-height: 1.5; }";
-    warningPage += ".btn { display: inline-block; background-color: #e53935; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 20px; }";
+    warningPage += ".btn-container { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }";
+    warningPage += ".btn { display: inline-block; background-color: #e53935; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; }";
     warningPage += ".btn:hover { background-color: #c62828; }";
-    warningPage += ".back-btn { background-color: #757575; margin-right: 10px; }";
+    warningPage += ".back-btn { background-color: #757575; }";
     warningPage += ".back-btn:hover { background-color: #616161; }";
+    warningPage += "form { display: inline-block; }";
     warningPage += "</style>";
     warningPage += "</head><body>";
     warningPage += "<div class='warning-container'>";
@@ -1057,8 +1059,10 @@ void serveOtaWarningPage() {
     warningPage += "</ul>";
     warningPage += "<p>If the update fails, you may need to manually update the firmware using a USB connection.</p>";
     warningPage += "</div>";
+    warningPage += "<div class='btn-container'>";
     warningPage += "<a href='/' class='btn back-btn'>Cancel</a>";
     warningPage += "<form method='post' action='/acknowledge-ota'><button type='submit' class='btn'>I Understand, Proceed</button></form>";
+    warningPage += "</div>";
     warningPage += "</div></body></html>";
     
     server.send(200, "text/html", warningPage);
@@ -1104,6 +1108,11 @@ static void connect_btn_event_cb(lv_event_t *e) {
                 server.send(200, "text/html", dashboard);
             });
             
+            // Add a dedicated route for the warning page
+            server.on("/warning", HTTP_GET, []() {
+                serveOtaWarningPage();
+            });
+            
             // Add a route to handle the acknowledgment form submission
             server.on("/acknowledge-ota", HTTP_POST, []() {
                 otaWarningAcknowledged = true;
@@ -1111,24 +1120,12 @@ static void connect_btn_event_cb(lv_event_t *e) {
                 server.send(302, "text/plain", "");
             });
             
-            // Add warning interception for OTA update path
-            server.on("/update", HTTP_GET, []() {
-                if (otaWarningAcknowledged) {
-                    // Let ElegantOTA handle the request
-                    return;
-                } else {
-                    // Show warning page first
-                    serveOtaWarningPage();
-                    return;
-                }
-            });
-            
-            // Initialize ElegantOTA after our routes
+            // Initialize ElegantOTA
             ElegantOTA.begin(&server);
             otaInitialized = true;
             Serial.println("OTA initialized with warning page.");
             
-            // Add JSON API endpoint
+            // Modify the dashboard to link to /warning instead of /update directly
             server.on("/api/data", HTTP_GET, [](){
                 server.sendHeader("Access-Control-Allow-Origin", "*");
                 server.sendHeader("Access-Control-Allow-Methods", "GET");
@@ -1182,6 +1179,11 @@ void tryAutoConnect() {
                     server.send(200, "text/html", dashboard);
                 });
                 
+                // Add a dedicated route for the warning page
+                server.on("/warning", HTTP_GET, []() {
+                    serveOtaWarningPage();
+                });
+                
                 // Add a route to handle the acknowledgment form submission
                 server.on("/acknowledge-ota", HTTP_POST, []() {
                     otaWarningAcknowledged = true;
@@ -1189,19 +1191,7 @@ void tryAutoConnect() {
                     server.send(302, "text/plain", "");
                 });
                 
-                // Add warning interception for OTA update path
-                server.on("/update", HTTP_GET, []() {
-                    if (otaWarningAcknowledged) {
-                        // Let ElegantOTA handle the request
-                        return;
-                    } else {
-                        // Show warning page first
-                        serveOtaWarningPage();
-                        return;
-                    }
-                });
-                
-                // Initialize ElegantOTA after our routes
+                // Initialize ElegantOTA
                 ElegantOTA.begin(&server);
                 otaInitialized = true;
                 Serial.println("OTA initialized with warning page.");
