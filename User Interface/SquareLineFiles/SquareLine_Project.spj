@@ -1332,27 +1332,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -6515,27 +6495,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -9030,7 +8990,27 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 10000,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 10520,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          22,
+                          22,
+                          22,
+                          255
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1250,
                 "strtype": "CHART/Style_bg",
                 "strval": "lv.PART.MAIN, Rectangle, Line, Pad, Transform",
@@ -9168,27 +9148,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -12110,27 +12070,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -14533,9 +14473,9 @@
                             "nid": 10520,
                             "strtype": "_style/Bg_Color",
                             "intarray": [
-                              149,
-                              149,
-                              149,
+                              54,
+                              54,
+                              54,
                               255
                             ],
                             "InheritedType": 7
@@ -14797,9 +14737,9 @@
                             "nid": 10520,
                             "strtype": "_style/Bg_Color",
                             "intarray": [
-                              149,
-                              149,
-                              149,
+                              54,
+                              54,
+                              54,
                               255
                             ],
                             "InheritedType": 7
@@ -15694,9 +15634,9 @@
                         "nid": 10520,
                         "strtype": "_style/Bg_Color",
                         "intarray": [
-                          148,
-                          149,
-                          148,
+                          54,
+                          54,
+                          54,
                           255
                         ],
                         "InheritedType": 7
@@ -15718,7 +15658,27 @@
               },
               {
                 "part": "lv.PART.CURSOR",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 10000,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 10520,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          128,
+                          141,
+                          254,
+                          120
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1060,
                 "strtype": "SPINBOX/Style_cursor",
                 "strval": "lv.PART.CURSOR, Rectangle, Text",
@@ -15858,9 +15818,9 @@
                         "nid": 10520,
                         "strtype": "_style/Bg_Color",
                         "intarray": [
-                          148,
-                          149,
-                          148,
+                          54,
+                          54,
+                          54,
                           255
                         ],
                         "InheritedType": 7
@@ -15882,7 +15842,27 @@
               },
               {
                 "part": "lv.PART.CURSOR",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 10000,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 10520,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          128,
+                          141,
+                          254,
+                          120
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1060,
                 "strtype": "SPINBOX/Style_cursor",
                 "strval": "lv.PART.CURSOR, Rectangle, Text",
@@ -17731,27 +17711,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -20211,7 +20171,27 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 10000,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 10520,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          22,
+                          22,
+                          22,
+                          255
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1250,
                 "strtype": "CHART/Style_bg",
                 "strval": "lv.PART.MAIN, Rectangle, Line, Pad, Transform",
@@ -20349,27 +20329,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -22830,7 +22790,27 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 10000,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 10520,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          22,
+                          22,
+                          22,
+                          255
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1250,
                 "strtype": "CHART/Style_bg",
                 "strval": "lv.PART.MAIN, Rectangle, Line, Pad, Transform",
@@ -22968,27 +22948,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 10000,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 10520,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      51,
-                      51,
-                      51,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": 1040,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -23010,15 +22970,15 @@
         "deepid": 1162549347,
         "children": [
           {
-            "guid": "GUID48172530-264598S8953463",
-            "deepid": 1162300511,
+            "guid": "GUID39042004-266099S7184103",
+            "deepid": 225097061,
             "dont_export": false,
             "locked": false,
             "properties": [
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Spinner1",
+                "strval": "Image1",
                 "InheritedType": 10
               },
               {
@@ -23050,17 +23010,17 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  85
+                  0
                 ],
                 "InheritedType": 7
               },
               {
                 "nid": 60,
-                "flags": 17,
+                "flags": 51,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  80,
-                  80
+                  1,
+                  1
                 ],
                 "InheritedType": 7
               },
@@ -23083,10 +23043,34 @@
                 "InheritedType": 2
               },
               {
+                "nid": 150,
+                "strtype": "OBJECT/Adv_hittest",
+                "strval": "True",
+                "InheritedType": 2
+              },
+              {
                 "nid": 225,
                 "flags": 1048576,
                 "strtype": "OBJECT/Scrolling",
                 "InheritedType": 1
+              },
+              {
+                "nid": 230,
+                "strtype": "OBJECT/Scrollable",
+                "strval": "False",
+                "InheritedType": 2
+              },
+              {
+                "nid": 300,
+                "strtype": "OBJECT/Scrollbar_mode",
+                "strval": "AUTO",
+                "InheritedType": 3
+              },
+              {
+                "nid": 310,
+                "strtype": "OBJECT/Scroll_direction",
+                "strval": "ALL",
+                "InheritedType": 3
               },
               {
                 "nid": 314,
@@ -23107,32 +23091,50 @@
                 "InheritedType": 1
               },
               {
-                "part": "lv.PART.MAIN",
-                "childs": [],
                 "nid": 1010,
-                "strtype": "SPINNER/Style_main",
-                "strval": "lv.PART.MAIN, Rectangle, Arc, Pad, Transform",
-                "InheritedType": 11
+                "strtype": "IMAGE/Image",
+                "InheritedType": 1
               },
               {
-                "part": "lv.PART.INDICATOR",
-                "childs": [],
                 "nid": 1020,
-                "strtype": "SPINNER/Style_indicator",
-                "strval": "lv.PART.INDICATOR, Arc",
-                "InheritedType": 11
+                "strtype": "IMAGE/Asset",
+                "strval": "assets/RadScan200x200.png",
+                "InheritedType": 5
               },
               {
                 "nid": 1030,
-                "strtype": "SPINNER/Spinner",
-                "InheritedType": 1
+                "strtype": "IMAGE/Pivot",
+                "intarray": [
+                  0,
+                  0
+                ],
+                "InheritedType": 7
+              },
+              {
+                "nid": 1040,
+                "strtype": "IMAGE/Rotation",
+                "InheritedType": 6
+              },
+              {
+                "nid": 1050,
+                "strtype": "IMAGE/Scale",
+                "integer": 256,
+                "InheritedType": 6
+              },
+              {
+                "part": "lv.PART.MAIN",
+                "childs": [],
+                "nid": 1060,
+                "strtype": "IMAGE/Style_main",
+                "strval": "lv.PART.MAIN, Rectangle, Image, Transform",
+                "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "SPINNER"
+            "saved_objtypeKey": "IMAGE"
           },
           {
-            "guid": "GUID82725985-264600S17703463",
-            "deepid": 963001412,
+            "guid": "GUID7751258-266101S3194103",
+            "deepid": -1678329148,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -23171,7 +23173,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  -30
+                  80
                 ],
                 "InheritedType": 7
               },
@@ -23253,7 +23255,150 @@
               {
                 "nid": 1030,
                 "strtype": "LABEL/Text",
-                "strval": "Starting Up",
+                "strval": "Loading...",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1040,
+                "strtype": "LABEL/Recolor",
+                "strval": "False",
+                "InheritedType": 2
+              },
+              {
+                "part": "lv.PART.MAIN",
+                "childs": [],
+                "nid": 1050,
+                "strtype": "LABEL/Style_main",
+                "strval": "lv.PART.MAIN, Text, Rectangle, Pad, Transform",
+                "InheritedType": 11
+              }
+            ],
+            "saved_objtypeKey": "LABEL"
+          },
+          {
+            "guid": "GUID64405161-266103S518114103",
+            "deepid": 195677950,
+            "dont_export": false,
+            "locked": false,
+            "properties": [
+              {
+                "nid": 10,
+                "strtype": "OBJECT/Name",
+                "strval": "Label39",
+                "InheritedType": 10
+              },
+              {
+                "nid": 20,
+                "strtype": "OBJECT/Layout",
+                "InheritedType": 1
+              },
+              {
+                "Flow": 0,
+                "Wrap": false,
+                "Reversed": false,
+                "MainAlignment": 0,
+                "CrossAlignment": 0,
+                "TrackAlignment": 0,
+                "LayoutType": 0,
+                "nid": 30,
+                "strtype": "OBJECT/Layout_type",
+                "strval": "No_layout",
+                "InheritedType": 13
+              },
+              {
+                "nid": 40,
+                "strtype": "OBJECT/Transform",
+                "InheritedType": 1
+              },
+              {
+                "nid": 50,
+                "flags": 17,
+                "strtype": "OBJECT/Position",
+                "intarray": [
+                  10,
+                  -10
+                ],
+                "InheritedType": 7
+              },
+              {
+                "nid": 60,
+                "flags": 51,
+                "strtype": "OBJECT/Size",
+                "intarray": [
+                  1,
+                  1
+                ],
+                "InheritedType": 7
+              },
+              {
+                "nid": 70,
+                "strtype": "OBJECT/Align",
+                "strval": "BOTTOM_LEFT",
+                "InheritedType": 3
+              },
+              {
+                "nid": 90,
+                "flags": 1048576,
+                "strtype": "OBJECT/Flags",
+                "InheritedType": 1
+              },
+              {
+                "nid": 110,
+                "strtype": "OBJECT/Clickable",
+                "strval": "False",
+                "InheritedType": 2
+              },
+              {
+                "nid": 225,
+                "flags": 1048576,
+                "strtype": "OBJECT/Scrolling",
+                "InheritedType": 1
+              },
+              {
+                "nid": 300,
+                "strtype": "OBJECT/Scrollbar_mode",
+                "strval": "AUTO",
+                "InheritedType": 3
+              },
+              {
+                "nid": 310,
+                "strtype": "OBJECT/Scroll_direction",
+                "strval": "ALL",
+                "InheritedType": 3
+              },
+              {
+                "nid": 314,
+                "strtype": "OBJECT/Scroll_snap_x",
+                "strval": "NONE",
+                "InheritedType": 3
+              },
+              {
+                "nid": 315,
+                "strtype": "OBJECT/Scroll_snap_y",
+                "strval": "NONE",
+                "InheritedType": 3
+              },
+              {
+                "nid": 320,
+                "flags": 1048576,
+                "strtype": "OBJECT/States",
+                "InheritedType": 1
+              },
+              {
+                "nid": 1010,
+                "strtype": "LABEL/Label",
+                "InheritedType": 1
+              },
+              {
+                "nid": 1020,
+                "strtype": "LABEL/Long_mode",
+                "strval": "WRAP",
+                "InheritedType": 3
+              },
+              {
+                "nid": 1030,
+                "strtype": "LABEL/Text",
+                "strval": "V1.0.1",
                 "InheritedType": 10
               },
               {
@@ -23273,7 +23418,7 @@
                       {
                         "nid": 10450,
                         "strtype": "_style/Text_Font",
-                        "strval": "Pixel_20",
+                        "strval": "montserrat_12",
                         "InheritedType": 3
                       }
                     ],
@@ -23843,7 +23988,7 @@
     "uiExportFolderPath": "C:\\Users\\Nevius\\Documents\\GitHub\\Radiation-Detector\\Firmware\\Radiation_Detector\\src\\UI (Aux Folder)",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 11,
+    "backup_cnt": 13,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

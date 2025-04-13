@@ -8,6 +8,41 @@
  * The PCNT polling is now performed every 100ms with an accumulator so that high‐frequency pulses are less likely to be missed.
  */
 
+// Debug configuration
+// Uncomment the line below to enable debug output at compile time
+#define DEBUG
+
+// Runtime debug flag - can be toggled via serial command
+bool debugEnabled = true;  // Set to true by default to see debug output immediately
+
+#ifdef DEBUG
+    #define DEBUG_TIMESTAMP() do { \
+        if (debugEnabled) { \
+            unsigned long ms = millis(); \
+            unsigned int seconds = ms / 1000; \
+            unsigned int minutes = seconds / 60; \
+            unsigned int hours = minutes / 60; \
+            unsigned int days = hours / 24; \
+            seconds %= 60; \
+            minutes %= 60; \
+            hours %= 24; \
+            char timestamp[20]; \
+            snprintf(timestamp, sizeof(timestamp), "[%d:%02d:%02d.%03d] ", \
+                    (int)days * 24 + (int)hours, (int)minutes, (int)seconds, (int)(ms % 1000)); \
+            Serial.print(timestamp); \
+        } \
+    } while(0)
+    
+    #define DEBUG_PRINT(x) do { if (debugEnabled) { DEBUG_TIMESTAMP(); Serial.print(x); } } while(0)
+    #define DEBUG_PRINTLN(x) do { if (debugEnabled) { DEBUG_TIMESTAMP(); Serial.println(x); } } while(0)
+    #define DEBUG_PRINTF(...) do { if (debugEnabled) { DEBUG_TIMESTAMP(); Serial.printf(__VA_ARGS__); } } while(0)
+#else
+    #define DEBUG_TIMESTAMP()
+    #define DEBUG_PRINT(x)
+    #define DEBUG_PRINTLN(x)
+    #define DEBUG_PRINTF(...)
+#endif
+
 /*******************************************************************************
  * Includes
  ******************************************************************************/ 
@@ -24,6 +59,9 @@
 #include "driver/pcnt.h"  // ESP32 pulse counter driver
 #include <ArduinoJson.h>
 #include "radiation_data.h" // Export radiation data to other modules
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
 
 /*******************************************************************************
  * Definitions & Constants
@@ -34,7 +72,7 @@ static const uint16_t SCREEN_HEIGHT = 320;
 static const uint8_t GEIGER_PULSE_PIN = 9;   ///< GPIO pin connected to the Geiger counter output
 static const uint8_t BUZZER_PIN       = 38;    ///< GPIO pin for LEDC buzzer output
 
-static const float CONVERSION_FACTOR = 153.8f; ///< Factor to convert CPM to µSv/h
+static const float CONVERSION_FACTOR = 1.0f; ///< Factor to convert CPM to µSv/h
 
 // Chart settings:
 // Chart1: 20 segments, each representing a 3-minute average (1 hour total)
@@ -160,6 +198,26 @@ static bool isDisplayDimmed = false;
 static uint8_t normalBrightness = 128;  // Adjust this value as needed
 static uint8_t dimmedBrightness = 20;   // Adjust this value as needed
 
+// Core-specific task handles
+TaskHandle_t pulseTaskHandle = NULL;
+TaskHandle_t uiTaskHandle = NULL;
+
+// Mutex for thread-safe data access
+SemaphoreHandle_t dataMutex = NULL;
+
+// Ring buffer for real-time pulse data
+#define PULSE_BUFFER_SIZE 20  // 20 samples at 50ms = 1 second of data
+struct PulseData {
+    int16_t count;
+    unsigned long timestamp;
+};
+PulseData pulseBuffer[PULSE_BUFFER_SIZE];
+int pulseBufferIndex = 0;
+
+// Function prototypes for core-specific tasks
+void pulseTask(void *parameter);
+void uiTask(void *parameter);
+
 /*******************************************************************************
  * Function Prototypes
  ******************************************************************************/ 
@@ -203,6 +261,38 @@ void setupPowerManagement();
 // Function to serve the OTA warning page
 void serveOtaWarningPage();
 
+// Function to process serial commands
+void processSerialCommands() {
+    if (Serial.available()) {
+        String command = Serial.readStringUntil('\n');
+        command.trim();
+        
+        if (command == "debug on") {
+            debugEnabled = true;
+            Serial.println("Debug output enabled");
+        } 
+        else if (command == "debug off") {
+            debugEnabled = false;
+            Serial.println("Debug output disabled");
+        }
+        else if (command == "status") {
+            Serial.println("=== Radiation Detector Status ===");
+            Serial.printf("Debug: %s\n", debugEnabled ? "ON" : "OFF");
+            Serial.printf("Current radiation: %.3f µSv/h\n", currentuSvHr);
+            Serial.printf("Average radiation: %.3f µSv/h\n", averageuSvHr);
+            Serial.printf("Maximum radiation: %.3f µSv/h\n", maxuSvHr);
+            Serial.printf("Cumulative dose: %.3f mSv\n", cumulativemSv);
+            Serial.printf("Total counts: %lu\n", totalCounts);
+            Serial.printf("CPM: %d\n", getRealTimeCPM());
+            Serial.printf("Alarms: %s\n", alarmDisabled ? "DISABLED" : "ENABLED");
+            Serial.printf("WiFi: %s\n", WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED");
+            if (WiFi.status() == WL_CONNECTED) {
+                Serial.printf("IP: %s\n", wifi_ip.c_str());
+            }
+        }
+    }
+}
+
 /*******************************************************************************
  * Buzzer & LEDC Alarm Functions
  ******************************************************************************/ 
@@ -226,12 +316,17 @@ void stopAlarmTone() {
  ******************************************************************************/ 
 static void alarms_checkbox_event_cb(lv_event_t * e) {
     lv_obj_t * checkbox = lv_event_get_target(e);
-    alarmDisabled = !lv_obj_has_state(checkbox, LV_STATE_CHECKED);
+    bool isChecked = lv_obj_has_state(checkbox, LV_STATE_CHECKED);
+    
+    // Update the global state
+    alarmDisabled = !isChecked;
+    
+    DEBUG_PRINTF("Checkbox state changed: %s (alarm %s)\n", 
+                isChecked ? "CHECKED" : "UNCHECKED",
+                alarmDisabled ? "DISABLED" : "ENABLED");
     
     // Save all alarm settings including the enabled state
     saveAlarmSettings();
-    
-    Serial.printf("Alarm %s via checkbox\n", alarmDisabled ? "DISABLED" : "ENABLED");
     
     // If alarms are disabled, make sure to stop any active tones
     if (alarmDisabled) {
@@ -247,13 +342,19 @@ static void alarms_checkbox_event_cb(lv_event_t * e) {
 static void spinbox_changed_event_cb(lv_event_t * e) {
     // Save the updated spinbox values and current alarm state
     saveAlarmSettings();
-    Serial.println("Spinbox value changed, alarm settings saved");
+    DEBUG_PRINTLN("Spinbox value changed, alarm settings saved");
 }
 
 /*******************************************************************************
  * Alarm Settings Management
  ******************************************************************************/ 
 void saveAlarmSettings() {
+    // Check if the UI components are initialized
+    if (!ui_EnableAlarmsCheckbox || !ui_CurrentSpinbox || !ui_CumulativeSpinbox) {
+        DEBUG_PRINTLN("ERROR: Cannot save alarm settings - UI not initialized!");
+        return;
+    }
+
     preferences.begin("settings", false);
     
     // Save current alarm threshold from spinbox
@@ -265,40 +366,55 @@ void saveAlarmSettings() {
     preferences.putInt("cumulativeAlarm", cumulativeValue);
     
     // Save alarm enabled state
-    preferences.putBool("alarmEnabled", !alarmDisabled);
+    bool isAlarmEnabled = !alarmDisabled;
+    preferences.putBool("alarmEnabled", isAlarmEnabled);
     
+    // Always flush to ensure data is written
     preferences.end();
-    Serial.printf("Alarm settings saved: Current=%.3f µSv/h, Cumulative=%.3f mSv, Alarms %s\n", 
-                 (float)currentValue / 1000.0f, 
-                 (float)cumulativeValue / 1000.0f, 
+    
+    DEBUG_PRINTF("Alarm settings saved: Current=%.1f µSv/h, Cumulative=%.1f mSv, Alarms %s\n", 
+                 (float)currentValue / 10.0f, 
+                 (float)cumulativeValue / 10.0f, 
                  alarmDisabled ? "DISABLED" : "ENABLED");
 }
 
 void loadAlarmSettings() {
+    // Check if the UI components are initialized
+    if (!ui_EnableAlarmsCheckbox || !ui_CurrentSpinbox || !ui_CumulativeSpinbox) {
+        DEBUG_PRINTLN("ERROR: Cannot load alarm settings - UI not initialized!");
+        return;
+    }
+
     preferences.begin("settings", true);
     
-    // Load current alarm threshold - default 5.000 µSv/h (5000 in spinbox format)
-    int32_t currentValue = preferences.getInt("currentAlarm", 5000);
+    // Load current alarm threshold - default 5.0 µSv/h (50 in spinbox format for xxx.x)
+    int32_t currentValue = preferences.getInt("currentAlarm", 50);
     lv_spinbox_set_value(ui_CurrentSpinbox, currentValue);
     
-    // Load cumulative alarm threshold - default 1.000 mSv (1000 in spinbox format)
-    int32_t cumulativeValue = preferences.getInt("cumulativeAlarm", 1000);
+    // Load cumulative alarm threshold - default 1.0 mSv (10 in spinbox format for xxx.x)
+    int32_t cumulativeValue = preferences.getInt("cumulativeAlarm", 10);
     lv_spinbox_set_value(ui_CumulativeSpinbox, cumulativeValue);
     
     // Load alarm enabled state
-    alarmDisabled = !preferences.getBool("alarmEnabled", false); // Default disabled
+    bool isAlarmEnabled = preferences.getBool("alarmEnabled", false); // Default disabled
+    alarmDisabled = !isAlarmEnabled;
+    
+    DEBUG_PRINTF("Loaded preferences value alarmEnabled = %s\n", isAlarmEnabled ? "true" : "false");
     
     // Update the checkbox state
-    if (!alarmDisabled) {
+    if (isAlarmEnabled) {
+        DEBUG_PRINTLN("Setting checkbox to CHECKED state");
         lv_obj_add_state(ui_EnableAlarmsCheckbox, LV_STATE_CHECKED);
     } else {
+        DEBUG_PRINTLN("Setting checkbox to UNCHECKED state");
         lv_obj_clear_state(ui_EnableAlarmsCheckbox, LV_STATE_CHECKED);
     }
     
     preferences.end();
-    Serial.printf("Alarm settings loaded: Current=%.3f µSv/h, Cumulative=%.3f mSv, Alarms %s\n", 
-                 (float)currentValue / 1000.0f, 
-                 (float)cumulativeValue / 1000.0f, 
+    
+    DEBUG_PRINTF("Alarm settings loaded: Current=%.1f µSv/h, Cumulative=%.1f mSv, Alarms %s\n", 
+                 (float)currentValue / 10.0f, 
+                 (float)cumulativeValue / 10.0f, 
                  alarmDisabled ? "DISABLED" : "ENABLED");
 }
 
@@ -313,23 +429,21 @@ void checkAlarms() {
     }
 
     // Get thresholds from spinboxes 
-    // Based on lv_spinbox_set_digit_format(ui_CurrentSpinbox, 4, 3), format is "0.000"
+    // For UI format "xxx.x" - spinbox value 1234 represents 123.4 µSv/h or 123.4 mSv
     int32_t currentValueRaw = lv_spinbox_get_value(ui_CurrentSpinbox);
     int32_t cumulativeValueRaw = lv_spinbox_get_value(ui_CumulativeSpinbox);
     
     // Convert from spinbox format to actual values
-    // For current alarm (µSv/h): divide by 1000 to get actual value (e.g., 5.000 µSv/h is stored as 5000)
-    float currentThreshold = (float)currentValueRaw / 1000.0f;
-    
-    // For cumulative alarm (mSv): divide by 1000 to get actual value (e.g., 1.000 mSv is stored as 1000)
-    float cumulativeThreshold = (float)cumulativeValueRaw / 1000.0f;
+    // The spinbox format is "xxx.x" so divide by 10 to get the actual value
+    float currentThreshold = (float)currentValueRaw / 10.0f;
+    float cumulativeThreshold = (float)cumulativeValueRaw / 10.0f;
 
     bool condition = (currentuSvHr > currentThreshold) || (cumulativemSv > cumulativeThreshold);
     
     // Debug output - uncomment when troubleshooting alarms
     static unsigned long lastDebugPrint = 0;
     if (millis() - lastDebugPrint > 5000) { // Print every 5 seconds to avoid flooding serial
-        Serial.printf("Alarm check: Current %.3f/%.3f µSv/h, Cumulative %.3f/%.3f mSv, Alarm %s\n", 
+        DEBUG_PRINTF("Alarm check: Current %.3f/%.3f µSv/h, Cumulative %.3f/%.3f mSv, Alarm %s\n", 
                      currentuSvHr, currentThreshold, 
                      cumulativemSv, cumulativeThreshold,
                      condition ? "TRIGGERED" : "inactive");
@@ -379,7 +493,7 @@ void initPulseCounter() {
     pulseAccumulationTime = millis();
     pulseDiffAccumulator = 0;
 
-    Serial.println("PCNT initialized on GEIGER_PULSE_PIN.");
+    DEBUG_PRINTLN("PCNT initialized on GEIGER_PULSE_PIN.");
 }
 
 /**
@@ -417,15 +531,31 @@ void updatePulseHistory() {
 }
 
 /**
- * @brief Returns the sum of pulses over the last 60 seconds.
+ * @brief Returns the total counts per minute based on the pulse history.
  *
- * @return int Total pulses in the 60-second ring buffer.
+ * This function computes the counts per minute by summing the pulses in the 
+ * 60-second history buffer. If the buffer is not yet full, it extrapolates
+ * based on the available data to give an accurate CPM estimate.
+ *
+ * @return int Counts per minute (CPM)
  */
 int getRealTimeCPM() {
     int sum = 0;
+    int validSeconds = 0;
+    
+    // Count pulses and valid seconds in history buffer
     for (int i = 0; i < PULSE_HISTORY_SIZE; i++) {
-        sum += pulseHistory[i];
+        if (pulseHistory[i] >= 0) {  // Valid entries
+            sum += pulseHistory[i];
+            validSeconds++;
+        }
     }
+    
+    // If we don't have a full minute of data yet, extrapolate
+    if (validSeconds < PULSE_HISTORY_SIZE && validSeconds > 0) {
+        return (int)((float)sum * ((float)PULSE_HISTORY_SIZE / (float)validSeconds));
+    }
+    
     return sum;
 }
 
@@ -606,7 +736,7 @@ void updateChartYAxis(lv_obj_t* chart, lv_chart_series_t* series, float maxValue
                            true, // draw_size
                            50); // label_en
     
-    Serial.printf("Chart Y-axis updated: max=%.2f, scaled=%d, ticks=%d/%d\n", 
+    DEBUG_PRINTF("Chart Y-axis updated: max=%.2f, scaled=%d, ticks=%d/%d\n", 
                  maxValue, scaledMax, majorTicks, minorTicks);
 }
 
@@ -643,9 +773,9 @@ void assignChartSeries() {
     chart3Series = lv_chart_get_series_next(ui_Chart3, NULL);
     
     if (!chart1Series)
-        Serial.println("Warning: ui_Chart1 has no series!");
+        DEBUG_PRINTLN("Warning: ui_Chart1 has no series!");
     if (!chart3Series)
-        Serial.println("Warning: ui_Chart3 has no series!");
+        DEBUG_PRINTLN("Warning: ui_Chart3 has no series!");
     
     // Reset maximum values for dynamic scaling
     chart1MaxValue = 1.0f;
@@ -720,7 +850,7 @@ void assignChartSeries() {
     if (ui_Chart1) lv_chart_refresh(ui_Chart1);
     if (ui_Chart3) lv_chart_refresh(ui_Chart3);
     
-    Serial.println("Chart series assigned and initialized with dynamic Y-axis scaling.");
+    DEBUG_PRINTLN("Chart series assigned and initialized with dynamic Y-axis scaling.");
 }
 
 /**
@@ -797,115 +927,309 @@ bool connectToWiFi(const char* ssid, const char* password) {
 }
 
 /*******************************************************************************
+ * Core-specific Task Functions
+ ******************************************************************************/
+void pulseTask(void *parameter) {
+    // Configure PCNT for this core
+    pcnt_config_t pcnt_config = {};
+    pcnt_config.pulse_gpio_num = GEIGER_PULSE_PIN;
+    pcnt_config.ctrl_gpio_num  = PCNT_PIN_NOT_USED;
+    pcnt_config.channel        = PCNT_CHANNEL_0;
+    pcnt_config.unit           = PCNT_UNIT;
+    pcnt_config.pos_mode       = PCNT_COUNT_INC;
+    pcnt_config.neg_mode       = PCNT_COUNT_DIS;
+    pcnt_config.lctrl_mode     = PCNT_MODE_KEEP;
+    pcnt_config.hctrl_mode     = PCNT_MODE_KEEP;
+    pcnt_config.counter_h_lim  = 32767;
+    pcnt_config.counter_l_lim  = 0;
+
+    pcnt_unit_config(&pcnt_config);
+    pcnt_set_filter_value(PCNT_UNIT, 10);
+    pcnt_filter_enable(PCNT_UNIT);
+    pcnt_counter_pause(PCNT_UNIT);
+    pcnt_counter_clear(PCNT_UNIT);
+    pcnt_counter_resume(PCNT_UNIT);
+
+    DEBUG_PRINTLN("Pulse counting task started on Core 0");
+
+    int16_t lastCount = 0;
+    const TickType_t xDelay = pdMS_TO_TICKS(50); // 50ms polling interval
+
+    while (true) {
+        int16_t currentCount = 0;
+        pcnt_get_counter_value(PCNT_UNIT, &currentCount);
+        
+        int16_t diff = currentCount - lastCount;
+        if (diff < 0) diff = 0; // Handle counter wrap-around
+        
+        // Debug significant pulse activity
+        if (diff > 5) {
+            DEBUG_PRINTF("Pulse burst: %d counts detected\n", diff);
+        }
+        
+        // Store in ring buffer with mutex protection
+        if (xSemaphoreTake(dataMutex, portMAX_DELAY)) {
+            pulseBuffer[pulseBufferIndex].count = diff;
+            pulseBuffer[pulseBufferIndex].timestamp = millis();
+            
+            // Also maintain the traditional pulse history for compatibility with existing code
+            // and to ensure we have a full minute of data for accurate CPM
+            static unsigned long lastSecondTimestamp = 0;
+            static int currentSecondAccumulator = 0;
+            
+            // Add to current second accumulator
+            currentSecondAccumulator += diff;
+            
+            // If we've passed a second boundary, update the pulse history
+            unsigned long now = millis();
+            if (now - lastSecondTimestamp >= 1000) {
+                pulseHistory[pulseHistoryIndex] = currentSecondAccumulator;
+                pulseHistoryIndex = (pulseHistoryIndex + 1) % PULSE_HISTORY_SIZE;
+                totalCounts += currentSecondAccumulator;
+                
+                // Debug output for high pulse counts
+                if (currentSecondAccumulator > 10) {
+                    DEBUG_PRINTF("High pulse count: %d counts in last second\n", currentSecondAccumulator);
+                }
+                
+                currentSecondAccumulator = 0;
+                lastSecondTimestamp = now;
+            }
+            
+            pulseBufferIndex = (pulseBufferIndex + 1) % PULSE_BUFFER_SIZE;
+            xSemaphoreGive(dataMutex);
+        }
+        
+        lastCount = currentCount;
+        vTaskDelay(xDelay);
+    }
+}
+
+void uiTask(void *parameter) {
+    const TickType_t xDelay = pdMS_TO_TICKS(50); // 50ms UI update interval
+    unsigned long lastTimeUpdate = 0;
+    
+    DEBUG_PRINTLN("UI task started on Core 1");
+    
+    // Give UI components time to initialize fully
+    vTaskDelay(pdMS_TO_TICKS(500));
+    
+    // Load alarm settings once UI is fully initialized
+    DEBUG_PRINTLN("UI task: Loading alarm settings now that UI is fully initialized");
+    
+    // Load spinbox values from preferences
+    preferences.begin("settings", true);
+    
+    // Get alarm thresholds with proper defaults
+    int32_t currentValue = preferences.getInt("currentAlarm", 50);  // Default 5.0 µSv/h
+    int32_t cumulativeValue = preferences.getInt("cumulativeAlarm", 10);  // Default 1.0 mSv
+    
+    // Get alarm enabled state again (redundant but safer)
+    bool alarmEnabled = preferences.getBool("alarmEnabled", false);
+    
+    preferences.end();
+    
+    DEBUG_PRINTF("UI task: Loaded alarm values: Current=%d, Cumulative=%d, Enabled=%s\n", 
+                 currentValue, cumulativeValue, alarmEnabled ? "true" : "false");
+    
+    // Set spinbox values
+    lv_spinbox_set_value(ui_CurrentSpinbox, currentValue);
+    lv_spinbox_set_value(ui_CumulativeSpinbox, cumulativeValue);
+    
+    // Ensure alarm checkbox state is properly set
+    if (alarmEnabled) {
+        DEBUG_PRINTLN("UI task: Setting alarm checkbox to CHECKED state");
+        lv_obj_add_state(ui_EnableAlarmsCheckbox, LV_STATE_CHECKED);
+        alarmDisabled = false;
+    } else {
+        DEBUG_PRINTLN("UI task: Setting alarm checkbox to UNCHECKED state");
+        lv_obj_clear_state(ui_EnableAlarmsCheckbox, LV_STATE_CHECKED);
+        alarmDisabled = true;
+    }
+    
+    // Force LVGL to process all UI updates
+    lv_timer_handler();
+    
+    while (true) {
+        // Process LVGL tasks
+        lv_timer_handler();
+        
+        // Check for serial commands
+        processSerialCommands();
+        
+        unsigned long now = millis();
+        
+        // Update radiation data with mutex protection
+        if (xSemaphoreTake(dataMutex, portMAX_DELAY)) {
+            // Use the traditional pulse history which tracks a full minute
+            // This ensures we have the correct CPM calculation
+            int cpm = getRealTimeCPM();
+            
+            // Calculate time delta since last update
+            static unsigned long lastUpdateTime = millis();
+            float dtSec = (float)(now - lastUpdateTime) / 1000.0f;
+            lastUpdateTime = now;
+            
+            // Log significant changes in radiation levels
+            static float lastCPM = 0;
+            if (abs(cpm - lastCPM) > 10) {
+                DEBUG_PRINTF("CPM change: %d → %d (%.2f µSv/h)\n", (int)lastCPM, cpm, cpm / CONVERSION_FACTOR);
+                lastCPM = cpm;
+            }
+            
+            // Update real-time stats
+            updateRealTimeStats((float)cpm, dtSec);
+            updateLabels();
+            accumulateCharts((float)cpm, dtSec);
+            checkAlarms();
+            
+            xSemaphoreGive(dataMutex);
+        }
+        
+        // Update power management
+        managePower();
+        
+        // Update WiFi info every second if connected
+        if (WiFi.status() == WL_CONNECTED && (now - lastTimeUpdate >= 1000)) {
+            lastTimeUpdate = now;
+            struct tm timeinfo;
+            if (getLocalTime(&timeinfo)) {
+                char timeStr[64];
+                strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+                String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
+                lv_label_set_text(ui_WIFIINFO, info.c_str());
+            } else {
+                String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
+                lv_label_set_text(ui_WIFIINFO, info.c_str());
+                DEBUG_PRINTLN("NTP time sync failed");
+            }
+        }
+        
+        // Handle OTA updates
+        if (otaInitialized) {
+            server.handleClient();
+        }
+        
+        vTaskDelay(xDelay);
+    }
+}
+
+/*******************************************************************************
  * setup() and loop()
  ******************************************************************************/ 
 void setup() {
     initSerial();
+    
+    // Print startup debug information
+    Serial.println("\n\n=== Radiation Detector Startup ===");
+    Serial.println("Debug output is enabled");
+    DEBUG_PRINTLN("DEBUG macro is working if you see this message");
+    
     initTFT();
+    
+    // Initialize LVGL BEFORE setting the startup screen
     initLVGL();
     
-    // Initialize the pulse history with zeros first
-    for (int i = 0; i < PULSE_HISTORY_SIZE; i++) {
-        pulseHistory[i] = 0;
-    }
+    // IMPORTANT: Set the startup screen IMMEDIATELY to avoid flicker
+    // This overrides the default screen set in ui_init()
+    lv_scr_load(ui_Startup_screen);
+    
+    // Create mutex for thread-safe data access
+    dataMutex = xSemaphoreCreateMutex();
+    
+    // Initialize pulse buffer and history
+    memset(pulseBuffer, 0, sizeof(pulseBuffer));
+    memset(pulseHistory, 0, sizeof(pulseHistory));
+    pulseBufferIndex = 0;
     pulseHistoryIndex = 0;
     
-    // Then initialize and validate charts
+    // Initialize and validate charts
     assignChartSeries();
     
-    // Additional validation for charts to ensure values appear properly on screen
+    // Additional validation for charts
     if (ui_Chart1 && ui_Chart3) {
-        // Draw the charts with explicit zeros and refresh display
         drawChart1();
         drawChart3();
-        
-        // Process LVGL tasks to apply chart updates immediately
         lv_timer_handler();
-        
-        Serial.println("Charts explicitly zeroed and drawn on screen.");
+        DEBUG_PRINTLN("Charts explicitly zeroed and drawn on screen.");
     } else {
-        Serial.println("WARNING: Charts not properly initialized!");
+        DEBUG_PRINTLN("WARNING: Charts not properly initialized!");
     }
     
-    initPulseCounter();
     initBuzzer();
 
     // Attach UI event callbacks
     lv_obj_add_event_cb(ui_Connect, connect_btn_event_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui_OnStartup, onstartup_checkbox_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(ui_EnableAlarmsCheckbox, alarms_checkbox_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    
-    // Add event handlers for spinbox value changes
     lv_obj_add_event_cb(ui_CurrentSpinbox, spinbox_changed_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(ui_CumulativeSpinbox, spinbox_changed_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
 
     // Set up power management
     setupPowerManagement();
 
-    // Restore saved settings
+    // Restore saved settings and load alarms 
     preferences.begin("settings", true);
+    
+    // Load onStartup setting
     bool onStartup = preferences.getBool("onstartup", false);
+    
+    // Load alarm state explicitly
+    bool alarmEnabled = preferences.getBool("alarmEnabled", false); // Default is disabled
+    alarmDisabled = !alarmEnabled;
+    
+    // Log the loaded settings
+    DEBUG_PRINTF("Loaded settings: onStartup=%s, alarmEnabled=%s\n", 
+                onStartup ? "true" : "false", 
+                alarmEnabled ? "true" : "false");
+    
     preferences.end();
     
-    if(onStartup)
+    // Set UI checkbox states (but wait to update the spinbox values until UI task)
+    if (onStartup)
         lv_obj_add_state(ui_OnStartup, LV_STATE_CHECKED);
     else
         lv_obj_clear_state(ui_OnStartup, LV_STATE_CHECKED);
-        
-    // Load alarm settings from preferences
-    loadAlarmSettings();
+    
+    // Force LVGL to process UI changes
+    lv_timer_handler();
 
-    // Load startup screen and start WiFi timer
-    lv_scr_load(ui_Startup_screen);
-    lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
+    // Start WiFi timer if auto-connect is enabled
+    if (onStartup) {
+        DEBUG_PRINTLN("Auto-connect enabled, starting WiFi timer");
+        lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
+    }
 
     startTime = millis();
     lastLoop = startTime;
-    Serial.println("Setup completed.");
+    
+    // Create tasks on specific cores
+    xTaskCreatePinnedToCore(
+        pulseTask,           // Task function
+        "PulseTask",         // Task name
+        4096,               // Stack size
+        NULL,               // Parameters
+        1,                  // Priority
+        &pulseTaskHandle,   // Task handle
+        0                   // Core ID (Core 0)
+    );
+    
+    xTaskCreatePinnedToCore(
+        uiTask,             // Task function
+        "UITask",           // Task name
+        8192,               // Stack size (larger for UI)
+        NULL,               // Parameters
+        1,                  // Priority
+        &uiTaskHandle,      // Task handle
+        1                   // Core ID (Core 1)
+    );
+    
+    DEBUG_PRINTLN("Setup completed.");
 }
 
 void loop() {
-    lv_timer_handler();
-
-    // Update PCNT and pulse history (using 100ms polling)
-    updatePulseHistory();
-
-    unsigned long now = millis();
-    float dtSec = (float)(now - lastLoop) / 1000.0f;
-    lastLoop = now;
-
-    int cpm = getRealTimeCPM();
-    updateRealTimeStats((float)cpm, dtSec);
-    updateLabels();
-    accumulateCharts((float)cpm, dtSec);
-    checkAlarms();
-    
-    // Battery monitoring disabled - device is USB powered
-    // checkBatteryLevel();
-    
-    // Manage power consumption
-    managePower();
-
-    // Update WiFi info every second if connected
-    static unsigned long lastTimeUpdate = 0;
-    if (WiFi.status() == WL_CONNECTED && (now - lastTimeUpdate >= 1000)) {
-        lastTimeUpdate = now;
-        struct tm timeinfo;
-        if (getLocalTime(&timeinfo)) {
-            char timeStr[64];
-            strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
-            String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
-            lv_label_set_text(ui_WIFIINFO, info.c_str());
-        } else {
-            String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
-            lv_label_set_text(ui_WIFIINFO, info.c_str());
-        }
-    }
-
-    // Handle OTA updates
-    if (otaInitialized) {
-        server.handleClient();
-    }
+    // Main loop is now empty as tasks handle everything
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Prevent watchdog trigger
 }
 
 /*******************************************************************************
@@ -913,7 +1237,9 @@ void loop() {
  ******************************************************************************/ 
 void initSerial() {
     Serial.begin(115200);
-    Serial.println("Initializing Serial...");
+    delay(50);  // Short delay to allow serial to initialize
+    Serial.flush();  // Flush any pending data
+    DEBUG_PRINTLN("Initializing Serial...");
 }
 
 void initTFT() {
@@ -922,7 +1248,7 @@ void initTFT() {
     tft.setRotation(1);
     uint16_t calData[5] = {300, 3597, 187, 3579, 6};
     tft.setTouch(calData);
-    Serial.println("TFT initialized.");
+    DEBUG_PRINTLN("TFT initialized.");
 }
 
 void initLVGL() {
@@ -977,11 +1303,12 @@ void initLVGL() {
     lv_indev_drv_register(&indev_drv);
 
     ui_init();
-    Serial.println("LVGL initialized + UI created.");
+    DEBUG_PRINTLN("LVGL initialized + UI created.");
 }
 
 void updateRealTimeStats(float cpm, float dtSec) {
-    // Calculate raw value
+    // Calculate raw value using the proper conversion factor
+    // CONVERSION_FACTOR is 153.8, so we divide CPM by this value to get µSv/h
     float rawCurrentuSvHr = cpm / CONVERSION_FACTOR;
     
     // Add to the smoothing window
@@ -990,12 +1317,17 @@ void updateRealTimeStats(float cpm, float dtSec) {
     
     // Calculate smoothed value (moving average)
     float sum = 0.0f;
+    int validReadings = 0;
     for (int i = 0; i < SMOOTHING_WINDOW_SIZE; i++) {
-        sum += currentReadingsWindow[i];
+        if (currentReadingsWindow[i] > 0 || i < currentReadingIndex) {
+            sum += currentReadingsWindow[i];
+            validReadings++;
+        }
     }
-    currentuSvHr = sum / SMOOTHING_WINDOW_SIZE;
+    // Avoid division by zero
+    currentuSvHr = (validReadings > 0) ? (sum / validReadings) : 0.0f;
     
-    // Update average
+    // Update average using total counts since start
     unsigned long now = millis();
     float totalTimeMin = (float)(now - startTime) / 60000.0f;
     if (totalTimeMin > 0.0f) {
@@ -1003,9 +1335,10 @@ void updateRealTimeStats(float cpm, float dtSec) {
         averageuSvHr = avgCPM / CONVERSION_FACTOR;
     }
     
-    // Update maximum if current reading is higher
-    if (currentuSvHr > maxuSvHr)
+    // Update maximum if current reading is higher (but only if it seems valid)
+    if (currentuSvHr > maxuSvHr && currentuSvHr < 100.0f) { // Sanity check upper limit
         maxuSvHr = currentuSvHr;
+    }
     
     // Calculate dose increment in µSv, then convert to mSv (1 mSv = 1000 µSv)
     // Formula: (µSv/h) / (3600 sec/h) * dt / 1000
@@ -1073,20 +1406,19 @@ void serveOtaWarningPage() {
 static void connect_btn_event_cb(lv_event_t *e) {
     const char* ssid = lv_textarea_get_text(ui_SSID);
     const char* password = lv_textarea_get_text(ui_PASSWORD);
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    DEBUG_PRINTF("Attempting to connect to SSID: %s\n", ssid);
     lv_label_set_text(ui_WIFIINFO, "Connecting");
     
     if (connectToWiFi(ssid, password)) {
-        Serial.println("WiFi connected.");
+        DEBUG_PRINTLN("WiFi connected.");
         wifi_ip = WiFi.localIP().toString();
         
         // Initialize mDNS responder
         if (MDNS.begin("radiation")) {
-            Serial.println("mDNS responder started - Device accessible at http://radiation.local");
+            DEBUG_PRINTLN("mDNS responder started - Device accessible at http://radiation.local");
             wifi_ip += "\nHostname: radiation.local";
         } else {
-            Serial.println("Error setting up mDNS responder!");
+            DEBUG_PRINTLN("Error setting up mDNS responder!");
         }
         
         preferences.begin("wifi", false);
@@ -1100,11 +1432,10 @@ static void connect_btn_event_cb(lv_event_t *e) {
             strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
             String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
             lv_label_set_text(ui_WIFIINFO, info.c_str());
-            Serial.println(info);
         } else {
             String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
             lv_label_set_text(ui_WIFIINFO, info.c_str());
-            Serial.println(info);
+            DEBUG_PRINTLN("NTP time sync failed");
         }
         if (!otaInitialized) {
             server.begin();
@@ -1133,7 +1464,7 @@ static void connect_btn_event_cb(lv_event_t *e) {
             // Initialize ElegantOTA
             ElegantOTA.begin(&server);
             otaInitialized = true;
-            Serial.println("OTA initialized with warning page.");
+            DEBUG_PRINTLN("OTA initialized with warning page.");
             
             // Modify the dashboard to link to /warning instead of /update directly
             server.on("/api/data", HTTP_GET, [](){
@@ -1147,7 +1478,7 @@ static void connect_btn_event_cb(lv_event_t *e) {
             });
         }
     } else {
-        Serial.println("WiFi connection failed.");
+        DEBUG_PRINTLN("WiFi connection failed.");
         lv_label_set_text(ui_WIFIINFO, "Disconnected\nFailed");
     }
 }
@@ -1158,19 +1489,26 @@ void tryAutoConnect() {
     String storedSsid = preferences.getString("ssid", "");
     String storedPassword = preferences.getString("password", "");
     preferences.end();
+    
     if (storedSsid.length() > 0) {
-        Serial.print("Found saved credentials. Trying to connect to: ");
-        Serial.println(storedSsid);
+        DEBUG_PRINTF("Found saved credentials. Trying to connect to: %s\n", storedSsid.c_str());
+        
+        // Update the info text while connecting
+        lv_label_set_text(ui_WIFIINFO, "Connecting...");
+        
+        // Process the UI update immediately
+        lv_timer_handler();
+        
         if (connectToWiFi(storedSsid.c_str(), storedPassword.c_str())) {
-            Serial.println("Auto WiFi connection successful.");
+            DEBUG_PRINTLN("Auto WiFi connection successful.");
             wifi_ip = WiFi.localIP().toString();
             
             // Initialize mDNS responder
             if (MDNS.begin("radiation")) {
-                Serial.println("mDNS responder started - Device accessible at http://radiation.local");
+                DEBUG_PRINTLN("mDNS responder started - Device accessible at http://radiation.local");
                 wifi_ip += "\nHostname: radiation.local";
             } else {
-                Serial.println("Error setting up mDNS responder!");
+                DEBUG_PRINTLN("Error setting up mDNS responder!");
             }
             
             configTime(0, 0, "pool.ntp.org", "time.nist.gov");
@@ -1180,15 +1518,15 @@ void tryAutoConnect() {
                 strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
                 String info = String("IP: ") + wifi_ip + "\nTime: " + timeStr + " UTC";
                 lv_label_set_text(ui_WIFIINFO, info.c_str());
-                Serial.println(info);
             } else {
                 String info = String("IP: ") + wifi_ip + "\nTime: NTP Failed";
                 lv_label_set_text(ui_WIFIINFO, info.c_str());
-                Serial.println(info);
+                DEBUG_PRINTLN("NTP time sync failed");
             }
+            
+            // Initialize OTA and web server if needed
             if (!otaInitialized) {
                 server.begin();
-                
                 // Reset acknowledgment flag when server initializes
                 otaWarningAcknowledged = false;
                 
@@ -1213,7 +1551,7 @@ void tryAutoConnect() {
                 // Initialize ElegantOTA
                 ElegantOTA.begin(&server);
                 otaInitialized = true;
-                Serial.println("OTA initialized with warning page.");
+                DEBUG_PRINTLN("OTA initialized with warning page.");
                 
                 // Add JSON API endpoint
                 server.on("/api/data", HTTP_GET, [](){
@@ -1227,21 +1565,26 @@ void tryAutoConnect() {
                 });
             }
         } else {
-            Serial.println("Auto WiFi connection failed.");
+            DEBUG_PRINTLN("Auto WiFi connection failed.");
             lv_label_set_text(ui_WIFIINFO, "Disconnected\nFailed");
         }
     } else {
-        Serial.println("No stored credentials found.");
+        DEBUG_PRINTLN("No stored credentials found.");
+        lv_label_set_text(ui_WIFIINFO, "No credentials");
     }
+    
+    // Only now load the initial screen after all connection attempts
+    DEBUG_PRINTLN("Loading InitialScreen after connection attempt");
     lv_scr_load(ui_InitialScreen);
 }
 
 static void wifi_connect_timer_cb(lv_timer_t * timer) {
+    // Check if auto-connect is enabled
     if(lv_obj_has_state(ui_OnStartup, LV_STATE_CHECKED)) {
-        Serial.println("OnStartup enabled. Attempting auto WiFi connection...");
-        tryAutoConnect();
+        DEBUG_PRINTLN("OnStartup enabled. Attempting auto WiFi connection...");
+        tryAutoConnect(); // This function will handle screen transitions
     } else {
-        Serial.println("OnStartup disabled. Loading InitialScreen immediately.");
+        DEBUG_PRINTLN("OnStartup disabled. Loading InitialScreen immediately.");
         lv_scr_load(ui_InitialScreen);
     }
     lv_timer_del(timer);

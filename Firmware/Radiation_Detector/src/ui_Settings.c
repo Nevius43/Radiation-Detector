@@ -203,9 +203,9 @@ void ui_Settings_screen_init(void)
     lv_obj_set_y(ui_CurrentSpinbox, -67);
     lv_obj_set_align(ui_CurrentSpinbox, LV_ALIGN_BOTTOM_LEFT);
     lv_obj_add_flag(ui_CurrentSpinbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_spinbox_set_digit_format(ui_CurrentSpinbox, 4, 3);
+    lv_spinbox_set_digit_format(ui_CurrentSpinbox, 4, 1);
     lv_spinbox_set_range(ui_CurrentSpinbox, 0, 9999);
-    lv_spinbox_set_cursor_pos(ui_CurrentSpinbox, 1 - 1);
+    lv_spinbox_set_cursor_pos(ui_CurrentSpinbox, 2 - 1);
     lv_obj_set_style_bg_color(ui_CurrentSpinbox, lv_color_hex(0x949594), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_CurrentSpinbox, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_CurrentSpinbox, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -216,9 +216,9 @@ void ui_Settings_screen_init(void)
     lv_obj_set_x(ui_CumulativeSpinbox, 34);
     lv_obj_set_y(ui_CumulativeSpinbox, -7);
     lv_obj_set_align(ui_CumulativeSpinbox, LV_ALIGN_BOTTOM_LEFT);
-    lv_spinbox_set_digit_format(ui_CumulativeSpinbox, 4, 3);
+    lv_spinbox_set_digit_format(ui_CumulativeSpinbox, 4, 1);
     lv_spinbox_set_range(ui_CumulativeSpinbox, 0, 9999);
-    lv_spinbox_set_cursor_pos(ui_CumulativeSpinbox, 1 - 1);
+    lv_spinbox_set_cursor_pos(ui_CumulativeSpinbox, 2 - 1);
     lv_obj_set_style_bg_color(ui_CumulativeSpinbox, lv_color_hex(0x949594), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_CumulativeSpinbox, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_CumulativeSpinbox, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
