@@ -16,6 +16,7 @@ ui_img_1345346577.c
 ui_img_electricity_png.c
 ui_img_settings_png.c
 ui_img_584212719.c
+ui_img_radscan200x200_png.c
 fonts/ui_font_Pixel.c
 fonts/ui_font_Pixel_20.c
 fonts/ui_font_Pixel_60.c

@@ -9,8 +9,6 @@ void ui_ChartsSpectrum_screen_init(void)
 {
     ui_ChartsSpectrum = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_ChartsSpectrum, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_ChartsSpectrum, lv_color_hex(0x333333), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_ChartsSpectrum, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Container8 = lv_obj_create(ui_ChartsSpectrum);
     lv_obj_remove_style_all(ui_Container8);
@@ -142,6 +140,8 @@ void ui_ChartsSpectrum_screen_init(void)
                                                                  LV_CHART_AXIS_PRIMARY_Y);
     static lv_coord_t ui_Chart4_series_1_array[] = { 2, 1, 0, 3, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 0, 60, 90, 75, 85, 0, 1, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 0, 95, 100, 80, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 50, 85, 70, 90, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 0 };
     lv_chart_set_ext_y_array(ui_Chart4, ui_Chart4_series_1, ui_Chart4_series_1_array);
+    lv_obj_set_style_bg_color(ui_Chart4, lv_color_hex(0x161616), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Chart4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Button30, ui_event_Button30, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button32, ui_event_Button32, LV_EVENT_ALL, NULL);

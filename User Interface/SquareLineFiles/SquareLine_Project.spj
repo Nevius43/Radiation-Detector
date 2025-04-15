@@ -12366,7 +12366,7 @@
                   {
                     "nid": 1030,
                     "strtype": "CHART/Number_of_points",
-                    "integer": 10,
+                    "integer": 30,
                     "InheritedType": 6
                   },
                   {
@@ -12519,7 +12519,7 @@
                   {
                     "nid": 1240,
                     "strtype": "CHART/ChartData",
-                    "strval": "[{\"Axis\":0,\"Color\":[37,255,0,255],\"Series\":[0,36,59,74,83,89,93,96,97,98,100]}]",
+                    "strval": "[{\"Axis\":0,\"Color\":[37,255,0,255],\"Series\":[0,13,24,34,42,50,56,62,67,71,75,78,81,83,86,87,89,90,92,93,94,94,95,96,96,97,97,98,98,98,100]}]",
                     "InheritedType": 12
                   },
                   {
@@ -12579,7 +12579,22 @@
                   },
                   {
                     "part": "lv.PART.INDICATOR",
-                    "childs": [],
+                    "childs": [
+                      {
+                        "nid": 10000,
+                        "strtype": "_style/StyleState",
+                        "strval": "DEFAULT",
+                        "childs": [
+                          {
+                            "nid": 11310,
+                            "strtype": "_style/Size_size",
+                            "integer": 1,
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 1
+                      }
+                    ],
                     "nid": 1280,
                     "strtype": "CHART/Style_indicator",
                     "strval": "lv.PART.INDICATOR, Rectangle, Pad, Size",
@@ -24763,7 +24778,7 @@
     "uiExportFolderPath": "C:\\Users\\Nevius\\Documents\\GitHub\\Radiation-Detector\\Firmware\\Radiation_Detector\\src\\UI (Aux Folder)",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 13,
+    "backup_cnt": 14,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

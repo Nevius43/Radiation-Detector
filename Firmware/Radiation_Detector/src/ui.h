@@ -115,16 +115,20 @@ extern lv_obj_t * ui_Button14;
 void ui_event_Button15(lv_event_t * e);
 extern lv_obj_t * ui_Button15;
 extern lv_obj_t * ui_Panel2;
-extern lv_obj_t * ui_Label20;
-extern lv_obj_t * ui_Label21;
-extern lv_obj_t * ui_CurrentVoltage;
 extern lv_obj_t * ui_MoreVoltage;
 extern lv_obj_t * ui_Label24;
 extern lv_obj_t * ui_LessVoltage;
 extern lv_obj_t * ui_Label25;
-extern lv_obj_t * ui_TargetVoltage;
 extern lv_obj_t * ui_AutoCalibrate;
 extern lv_obj_t * ui_Label26;
+extern lv_obj_t * ui_Container13;
+extern lv_obj_t * ui_Label20;
+extern lv_obj_t * ui_CurrentVoltage;
+extern lv_obj_t * ui_Container14;
+extern lv_obj_t * ui_TargetVoltage;
+extern lv_obj_t * ui_Label21;
+extern lv_obj_t * ui_Container15;
+extern lv_obj_t * ui_Chart2;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Settings
@@ -221,14 +225,12 @@ extern lv_obj_t * ui_Label13;
 extern lv_obj_t * ui_Chart4;
 // CUSTOM VARIABLES
 
-// SCREEN: ui_Screen1
-void ui_Screen1_screen_init(void);
-extern lv_obj_t * ui_Startup_screen;
-extern lv_obj_t * ui_Spinner1;
-extern lv_obj_t * ui_Label19;
-// CUSTOM VARIABLES
-
 // SCREEN: ui_Startup_screen
+void ui_Startup_screen_screen_init(void);
+extern lv_obj_t * ui_Startup_screen;
+extern lv_obj_t * ui_Image1;
+extern lv_obj_t * ui_Label19;
+extern lv_obj_t * ui_Label39;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -243,6 +245,7 @@ LV_IMG_DECLARE(ui_img_1345346577);    // assets/bar-chart.png
 LV_IMG_DECLARE(ui_img_electricity_png);    // assets/electricity.png
 LV_IMG_DECLARE(ui_img_settings_png);    // assets/settings.png
 LV_IMG_DECLARE(ui_img_584212719);    // assets/reiniciar (1).png
+LV_IMG_DECLARE(ui_img_radscan200x200_png);    // assets/RadScan200x200.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_Pixel);

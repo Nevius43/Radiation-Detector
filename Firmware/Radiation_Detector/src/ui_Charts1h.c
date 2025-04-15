@@ -9,8 +9,6 @@ void ui_Charts1h_screen_init(void)
 {
     ui_Charts1h = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Charts1h, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Charts1h, lv_color_hex(0x333333), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Charts1h, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Container1 = lv_obj_create(ui_Charts1h);
     lv_obj_remove_style_all(ui_Container1);
@@ -145,6 +143,8 @@ void ui_Charts1h_screen_init(void)
                                                                  LV_CHART_AXIS_PRIMARY_Y);
     static lv_coord_t ui_Chart1_series_1_array[] = { 0 };
     lv_chart_set_ext_y_array(ui_Chart1, ui_Chart1_series_1, ui_Chart1_series_1_array);
+    lv_obj_set_style_bg_color(ui_Chart1, lv_color_hex(0x161616), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Chart1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Button8, ui_event_Button8, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button10, ui_event_Button10, LV_EVENT_ALL, NULL);

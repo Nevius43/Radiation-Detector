@@ -9,8 +9,6 @@ void ui_InitialScreen_screen_init(void)
 {
     ui_InitialScreen = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_InitialScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_InitialScreen, lv_color_hex(0x333333), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_InitialScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SelectGM = lv_btn_create(ui_InitialScreen);
     lv_obj_set_width(ui_SelectGM, 100);

@@ -5,26 +5,34 @@
 
 #include "ui.h"
 
-void ui_Screen1_screen_init(void)
+void ui_Startup_screen_screen_init(void)
 {
     ui_Startup_screen = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Startup_screen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_Spinner1 = lv_spinner_create(ui_Startup_screen, 1000, 90);
-    lv_obj_set_width(ui_Spinner1, 80);
-    lv_obj_set_height(ui_Spinner1, 80);
-    lv_obj_set_x(ui_Spinner1, 0);
-    lv_obj_set_y(ui_Spinner1, 85);
-    lv_obj_set_align(ui_Spinner1, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(ui_Spinner1, LV_OBJ_FLAG_CLICKABLE);      /// Flags
+    ui_Image1 = lv_img_create(ui_Startup_screen);
+    lv_img_set_src(ui_Image1, &ui_img_radscan200x200_png);
+    lv_obj_set_width(ui_Image1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Image1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Image1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Label19 = lv_label_create(ui_Startup_screen);
     lv_obj_set_width(ui_Label19, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label19, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_Label19, 0);
-    lv_obj_set_y(ui_Label19, -30);
+    lv_obj_set_y(ui_Label19, 80);
     lv_obj_set_align(ui_Label19, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label19, "Starting Up");
-    lv_obj_set_style_text_font(ui_Label19, &ui_font_Pixel_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(ui_Label19, "Loading...");
+
+    ui_Label39 = lv_label_create(ui_Startup_screen);
+    lv_obj_set_width(ui_Label39, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label39, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label39, 10);
+    lv_obj_set_y(ui_Label39, -10);
+    lv_obj_set_align(ui_Label39, LV_ALIGN_BOTTOM_LEFT);
+    lv_label_set_text(ui_Label39, "V1.0.1");
+    lv_obj_set_style_text_font(ui_Label39, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }
