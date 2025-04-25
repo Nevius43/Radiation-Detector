@@ -1,1 +1,3 @@
-Record=TopLevelDocument|FileName=RadiationDetector.SchDoc|SheetNumber=1
+Record=TopLevelDocument|FileName=GeigerCircuit.SchDoc|SheetNumber=2
+Record=NoMainPathDocument|SourceDocument=GeigerCircuit.SchDoc|FileName=Microcontroller_Module.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=GeigerCircuit.SchDoc|FileName=ScintillatorCircuit.SchDoc|SheetNumber=3
