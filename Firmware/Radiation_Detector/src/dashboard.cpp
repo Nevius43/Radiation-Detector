@@ -26,46 +26,47 @@ String getDashboardPage() {
   page += "<!DOCTYPE html><html lang='en'><head>";
   page += "<meta charset='UTF-8'>";
   page += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
-  page += "<title>Radiation Detector Dashboard</title>";
+  page += "<title>Radiation Detector Dashboard ☢️</title>";
   // Add Chart.js for visualizations
   page += "<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
   // Embedded CSS for modern, elegant styling.
   page += "<style>";
-  page += "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }";
-  page += "header { background-color: #4CAF50; color: white; padding: 20px 10px; text-align: center; margin-bottom: 20px; }";
+  page += "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f1317; margin: 0; padding: 0; color: #fff; }";
+  page += "header { background-color: #262a36; color: #D8C12C; padding: 20px 10px; text-align: center; margin-bottom: 20px; }";
   page += "h1 { margin: 0; font-size: 2em; }";
   page += ".container { display: flex; flex-direction: column; align-items: center; padding: 20px; }";
-  page += ".cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; margin: 20px 0; }";
-  page += ".card { background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; text-align: center; transition: transform 0.3s; }";
+  page += ".cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; width: 100%; max-width: 1000px; margin: 20px 0 40px 0; }";
+  page += ".card { background-color: #262a36; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); padding: 20px; text-align: center; transition: transform 0.3s; }";
   page += ".card:hover { transform: translateY(-5px); }";
-  page += ".card h2 { margin: 0 0 10px 0; font-size: 1.5em; color: #333; }";
-  page += ".card p { margin: 0; font-size: 2em; color: #4CAF50; }";
-  page += ".chart-container { width: 100%; max-width: 1000px; margin: 20px 0; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; }";
-  page += ".chart-row { display: flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; }";
-  page += ".chart-card { flex: 1; min-width: 300px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; }";
+  page += ".card h2 { margin: 0 0 10px 0; font-size: 1.5em; color: #fff; }";
+  page += ".card p { margin: 0; font-size: 2em; color: #D8C12C; }";
+  page += ".chart-container { width: 100%; max-width: 1000px; margin: 20px 0; background-color: #262a36; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); padding: 20px; }";
+  page += ".chart-row { display: flex; flex-wrap: wrap; gap: 30px; width: 100%; max-width: 1000px; }";
+  page += ".chart-card { flex: 1; min-width: 300px; background-color: #262a36; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); padding: 20px; }";
+  page += ".chart-row + .chart-row { margin-top: 40px; }";
   page += ".buttons { margin-top: 30px; }";
-  page += ".btn { display: inline-block; padding: 15px 25px; font-size: 1em; color: white; background-color: #007BFF; text-decoration: none; border-radius: 5px; transition: background-color 0.3s; margin: 0 10px; }";
-  page += ".btn:hover { background-color: #0056b3; }";
+  page += ".btn { display: inline-block; padding: 15px 25px; font-size: 1em; color: #0f1317; background-color: #D8C12C; text-decoration: none; border-radius: 5px; transition: background-color 0.3s; margin: 0 10px; }";
+  page += ".btn:hover { background-color: #7274ee; color: #fff; }";
   page += ".gauge-container { position: relative; width: 200px; height: 200px; margin: 0 auto; }";
-  page += "footer { margin-top: 40px; font-size: 0.9em; color: #777; }";
+  page += "footer { margin-top: 40px; font-size: 0.9em; color: #D8C12C; }";
   page += ".radiation-level { text-align: center; margin-top: 10px; font-weight: bold; }";
-  page += ".radiation-safe { color: #4CAF50; }";
-  page += ".radiation-moderate { color: #FFC107; }";
+  page += ".radiation-safe { color: #7274ee; }";
+  page += ".radiation-moderate { color: #D8C12C; }";
   page += ".radiation-high { color: #FF5722; }";
   page += ".radiation-extreme { color: #F44336; }";
   
   // Status indicator styles
   page += ".status-indicator { position: fixed; top: 10px; right: 10px; padding: 5px 10px; border-radius: 15px; font-size: 12px; }";
-  page += ".status-online { background-color: #4CAF50; color: white; }";
-  page += ".status-updating { background-color: #2196F3; color: white; }";
+  page += ".status-online { background-color: #7274ee; color: #0f1317; }";
+  page += ".status-updating { background-color: #D8C12C; color: #0f1317; }";
   page += ".status-offline { background-color: #F44336; color: white; }";
-  page += ".last-updated { text-align: center; margin-top: 10px; font-size: 12px; color: #777; }";
+  page += ".last-updated { text-align: center; margin-top: 10px; font-size: 12px; color: #D8C12C; }";
   
   page += "</style>";
   page += "</head><body>";
   
   // Header section
-  page += "<header><h1>Radiation Detector Dashboard</h1></header>";
+  page += "<header><h1>Radiation Detector Dashboard ☢️</h1></header>";
   
   // Status indicator
   page += "<div id='status-indicator' class='status-indicator status-online'>Online</div>";
@@ -184,8 +185,8 @@ String getDashboardPage() {
   page += "      datasets: [{";
   page += "        label: 'µSv/h',";
   page += "        data: chartData.hourly,";
-  page += "        borderColor: '#4CAF50',";
-  page += "        backgroundColor: 'rgba(76, 175, 80, 0.1)',";
+  page += "        borderColor: '#7274ee',";
+  page += "        backgroundColor: 'rgba(114, 116, 238, 0.1)',";
   page += "        fill: true,";
   page += "        tension: 0.3";
   page += "      }]";
@@ -193,10 +194,11 @@ String getDashboardPage() {
   page += "    options: {";
   page += "      responsive: true,";
   page += "      plugins: {";
-  page += "        legend: { position: 'top' }";
+  page += "        legend: { position: 'top', labels: { color: '#fff' } }";
   page += "      },";
   page += "      scales: {";
-  page += "        y: { beginAtZero: true }";
+  page += "        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#fff' } },";
+  page += "        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#fff' } }";
   page += "      }";
   page += "    }";
   page += "  });";
@@ -210,8 +212,8 @@ String getDashboardPage() {
   page += "      datasets: [{";
   page += "        label: 'µSv/h',";
   page += "        data: chartData.daily,";
-  page += "        borderColor: '#2196F3',";
-  page += "        backgroundColor: 'rgba(33, 150, 243, 0.1)',";
+  page += "        borderColor: '#D8C12C',";
+  page += "        backgroundColor: 'rgba(216, 193, 44, 0.1)',";
   page += "        fill: true,";
   page += "        tension: 0.3";
   page += "      }]";
@@ -219,10 +221,11 @@ String getDashboardPage() {
   page += "    options: {";
   page += "      responsive: true,";
   page += "      plugins: {";
-  page += "        legend: { position: 'top' }";
+  page += "        legend: { position: 'top', labels: { color: '#fff' } }";
   page += "      },";
   page += "      scales: {";
-  page += "        y: { beginAtZero: true }";
+  page += "        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#fff' } },";
+  page += "        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#fff' } }";
   page += "      }";
   page += "    }";
   page += "  });";
@@ -235,7 +238,7 @@ String getDashboardPage() {
   page += "      labels: ['Current', 'Remaining'],";
   page += "      datasets: [{";
   page += "        data: [chartData.current, 10 - Math.min(chartData.current, 10)],";
-  page += "        backgroundColor: [getRadiationColor(chartData.current), '#ECEFF1'],";
+  page += "        backgroundColor: [getRadiationColor(chartData.current), '#0d1912'],";
   page += "        borderWidth: 0";
   page += "      }]";
   page += "    },";
@@ -257,8 +260,8 @@ String getDashboardPage() {
   
   // Function to determine color based on radiation level
   page += "function getRadiationColor(value) {";
-  page += "  if (value < 0.5) return '#4CAF50';"; // Safe
-  page += "  if (value < 2.5) return '#FFC107';"; // Moderate
+  page += "  if (value < 0.5) return '#7274ee';"; // Safe
+  page += "  if (value < 2.5) return '#D8C12C';"; // Moderate
   page += "  if (value < 5) return '#FF5722';";   // High
   page += "  return '#F44336';";                 // Extreme
   page += "}";
@@ -315,7 +318,7 @@ String getDashboardPage() {
   
   // Update gauge chart
   page += "      gaugeChart.data.datasets[0].data = [data.current, 10 - Math.min(data.current, 10)];";
-  page += "      gaugeChart.data.datasets[0].backgroundColor = [getRadiationColor(data.current), '#ECEFF1'];";
+  page += "      gaugeChart.data.datasets[0].backgroundColor = [getRadiationColor(data.current), '#0d1912'];";
   page += "      gaugeChart.update();";
   
   // Update radiation level text

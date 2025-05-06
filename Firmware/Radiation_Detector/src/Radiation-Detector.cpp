@@ -126,6 +126,8 @@ extern lv_obj_t* ui_MaximumRad;
 extern lv_obj_t* ui_CumulativeRad;
 extern lv_obj_t* ui_Chart1;
 extern lv_obj_t* ui_Chart3;
+extern lv_obj_t* ui_CurrentAlarm;    ///< Current radiation alarm threshold label
+extern lv_obj_t* ui_CumulativeAlarm; ///< Cumulative dose alarm threshold label
 
 extern lv_obj_t* ui_Startup_screen;       ///< Startup screen (shown while connecting)
 extern lv_obj_t* ui_InitialScreen; ///< Screen shown after connection attempt
@@ -340,6 +342,21 @@ static void alarms_checkbox_event_cb(lv_event_t * e) {
  * This handler saves the alarm settings whenever a spinbox value changes.
  */
 static void spinbox_changed_event_cb(lv_event_t * e) {
+    lv_obj_t * spinbox = lv_event_get_target(e);
+    char buffer[16];
+    
+    // Update corresponding alarm label when spinbox value changes
+    if (spinbox == ui_CurrentSpinbox && ui_CurrentAlarm) {
+        int32_t currentValue = lv_spinbox_get_value(ui_CurrentSpinbox);
+        snprintf(buffer, sizeof(buffer), "%.1f", (float)currentValue / 10.0f);
+        lv_label_set_text(ui_CurrentAlarm, buffer);
+    } 
+    else if (spinbox == ui_CumulativeSpinbox && ui_CumulativeAlarm) {
+        int32_t cumulativeValue = lv_spinbox_get_value(ui_CumulativeSpinbox);
+        snprintf(buffer, sizeof(buffer), "%.1f", (float)cumulativeValue / 10.0f);
+        lv_label_set_text(ui_CumulativeAlarm, buffer);
+    }
+    
     // Save the updated spinbox values and current alarm state
     saveAlarmSettings();
     DEBUG_PRINTLN("Spinbox value changed, alarm settings saved");
@@ -408,6 +425,18 @@ void loadAlarmSettings() {
     } else {
         DEBUG_PRINTLN("Setting checkbox to UNCHECKED state");
         lv_obj_clear_state(ui_EnableAlarmsCheckbox, LV_STATE_CHECKED);
+    }
+    
+    // Update alarm threshold labels on the main screen
+    char buffer[16];
+    if (ui_CurrentAlarm) {
+        snprintf(buffer, sizeof(buffer), "%.1f", (float)currentValue / 10.0f);
+        lv_label_set_text(ui_CurrentAlarm, buffer);
+    }
+    
+    if (ui_CumulativeAlarm) {
+        snprintf(buffer, sizeof(buffer), "%.1f", (float)cumulativeValue / 10.0f);
+        lv_label_set_text(ui_CumulativeAlarm, buffer);
     }
     
     preferences.end();
@@ -1356,6 +1385,21 @@ void updateLabels() {
     lv_label_set_text(ui_MaximumRad, buffer);
     snprintf(buffer, sizeof(buffer), "%.2f", cumulativemSv);
     lv_label_set_text(ui_CumulativeRad, buffer);
+    
+    // Update alarm threshold labels on the main screen
+    if (ui_CurrentSpinbox && ui_CurrentAlarm) {
+        int32_t currentValue = lv_spinbox_get_value(ui_CurrentSpinbox);
+        float currentThreshold = (float)currentValue / 10.0f;
+        snprintf(buffer, sizeof(buffer), "%.1f", currentThreshold);
+        lv_label_set_text(ui_CurrentAlarm, buffer);
+    }
+    
+    if (ui_CumulativeSpinbox && ui_CumulativeAlarm) {
+        int32_t cumulativeValue = lv_spinbox_get_value(ui_CumulativeSpinbox);
+        float cumulativeThreshold = (float)cumulativeValue / 10.0f;
+        snprintf(buffer, sizeof(buffer), "%.1f", cumulativeThreshold);
+        lv_label_set_text(ui_CumulativeAlarm, buffer);
+    }
 }
 
 /*******************************************************************************
@@ -1366,21 +1410,24 @@ void serveOtaWarningPage() {
     String warningPage = "<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
     warningPage += "<title>OTA Update Warning</title>";
     warningPage += "<style>";
-    warningPage += "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; background-color: #f5f5f5; }";
-    warningPage += ".warning-container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }";
-    warningPage += "h1 { color: #e53935; }";
+    warningPage += "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; text-align: center; background-color: #0f1317; color: #fff; }";
+    warningPage += ".warning-container { max-width: 600px; margin: 0 auto; background-color: #262a36; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }";
+    warningPage += "h1 { color: #D8C12C; }";
     warningPage += ".warning-icon { margin-bottom: 20px; }";
-    warningPage += ".warning-text { color: #333; text-align: left; margin: 20px 0; line-height: 1.5; }";
-    warningPage += ".btn-container { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }";
-    warningPage += ".btn { display: inline-block; background-color: #e53935; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; }";
-    warningPage += ".btn:hover { background-color: #c62828; }";
-    warningPage += ".back-btn { background-color: #757575; }";
-    warningPage += ".back-btn:hover { background-color: #616161; }";
-    warningPage += "form { display: inline-block; }";
+    warningPage += ".warning-text { color: #fff; text-align: left; margin: 20px 0; line-height: 1.5; }";
+    warningPage += ".btn-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }";
+    warningPage += ".btn { display: inline-flex; justify-content: center; align-items: center; background-color: #D8C12C; color: #0f1317; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; min-width: 200px; height: 50px; box-sizing: border-box; }";
+    warningPage += ".btn:hover { background-color: #7274ee; color: #fff; }";
+    warningPage += ".back-btn { background-color: #262a36; color: #fff; border: 1px solid #7274ee; }";
+    warningPage += ".back-btn:hover { background-color: #7274ee; }";
+    warningPage += "form { display: inline-block; margin: 0; }";
+    warningPage += "button.btn { width: 100%; }";
+    warningPage += "strong { color: #D8C12C; }";
+    warningPage += "ul { color: #fff; }";
     warningPage += "</style>";
     warningPage += "</head><body>";
     warningPage += "<div class='warning-container'>";
-    warningPage += "<div class='warning-icon'><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'><path fill='#e53935' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/></svg></div>";
+    warningPage += "<div class='warning-icon'><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'><path fill='#D8C12C' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/></svg></div>";
     warningPage += "<h1>WARNING: FIRMWARE UPDATE</h1>";
     warningPage += "<div class='warning-text'>";
     warningPage += "<p><strong>Uploading incorrect firmware can brick your device!</strong></p>";
@@ -1395,7 +1442,7 @@ void serveOtaWarningPage() {
     warningPage += "</div>";
     warningPage += "<div class='btn-container'>";
     warningPage += "<a href='/' class='btn back-btn'>Cancel</a>";
-    warningPage += "<form method='post' action='/acknowledge-ota'><button type='submit' class='btn'>I Understand, Proceed</button></form>";
+    warningPage += "<form method='post' action='/acknowledge-ota' style='width: 200px;'><button type='submit' class='btn'>I Understand, Proceed</button></form>";
     warningPage += "</div>";
     warningPage += "</div></body></html>";
     
@@ -1416,7 +1463,6 @@ static void connect_btn_event_cb(lv_event_t *e) {
         // Initialize mDNS responder
         if (MDNS.begin("radiation")) {
             DEBUG_PRINTLN("mDNS responder started - Device accessible at http://radiation.local");
-            wifi_ip += "\nHostname: radiation.local";
         } else {
             DEBUG_PRINTLN("Error setting up mDNS responder!");
         }
@@ -1506,7 +1552,6 @@ void tryAutoConnect() {
             // Initialize mDNS responder
             if (MDNS.begin("radiation")) {
                 DEBUG_PRINTLN("mDNS responder started - Device accessible at http://radiation.local");
-                wifi_ip += "\nHostname: radiation.local";
             } else {
                 DEBUG_PRINTLN("Error setting up mDNS responder!");
             }
