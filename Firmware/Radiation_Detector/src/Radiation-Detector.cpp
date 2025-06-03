@@ -72,7 +72,9 @@ static const uint16_t SCREEN_HEIGHT = 320;
 static const uint8_t GEIGER_PULSE_PIN = 9;   ///< GPIO pin connected to the Geiger counter output
 static const uint8_t BUZZER_PIN       = 38;    ///< GPIO pin for LEDC buzzer output
 
-static const float CONVERSION_FACTOR = 1.0f; ///< Factor to convert CPM to µSv/h
+// Conversion factor from counts per minute (CPM) to µSv/h.
+// For the SBM‑20 Geiger tube this value is approximately 153.8.
+static const float CONVERSION_FACTOR = 153.8f;
 
 // Chart settings:
 // Chart1: 20 segments, each representing a 3-minute average (1 hour total)
