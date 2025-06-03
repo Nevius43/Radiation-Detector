@@ -2,7 +2,6 @@
 
 A digital radiation monitoring system built on the ESP32-S3 platform with real-time measurement, visualization and wireless access.
 
-![Radiation Detector](images/schematic.png)
 
 ## Table of Contents
 - [Overview](#overview)
