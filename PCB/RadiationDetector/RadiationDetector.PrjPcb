@@ -101,6 +101,23 @@ GenerateClassCluster=0
 DocumentUniqueId=NFMTEKEE
 
 [Document4]
+DocumentPath=Peripherals.SchDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=0
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=FFURSXRZ
+
+[Document5]
 DocumentPath=Geiger_Circuit.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -117,7 +134,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=NWAIOTUJ
 
-[Document5]
+[Document6]
 DocumentPath=RadiationDetector.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -134,7 +151,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=IVRBKMKP
 
-[Document6]
+[Document7]
 DocumentPath=Schlib.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -151,7 +168,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XWLHSDAU
 
-[Document7]
+[Document8]
 DocumentPath=PcbLib.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -168,7 +185,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=WBQJMCNM
 
-[Document8]
+[Document9]
 DocumentPath=RadiationDetector.Annotation
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -186,12 +203,12 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [Parameter1]
-Name=Revision
-Value=1
-
-[Parameter2]
 Name=Author
 Value=Pablo Morán Peña
+
+[Parameter2]
+Name=Revision
+Value=1
 
 [Configuration1]
 Name=Sources
