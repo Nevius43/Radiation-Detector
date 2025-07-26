@@ -1,6 +1,6 @@
-Record=TopLevelDocument|FileName=Battery.SchDoc|SheetNumber=5
-Record=NoMainPathDocument|SourceDocument=Battery.SchDoc|FileName=Geiger_Circuit.SchDoc|SheetNumber=6
-Record=NoMainPathDocument|SourceDocument=Battery.SchDoc|FileName=IO_Ports.SchDoc|SheetNumber=2
-Record=NoMainPathDocument|SourceDocument=Battery.SchDoc|FileName=Microcontroller_Unit.SchDoc|SheetNumber=1
-Record=NoMainPathDocument|SourceDocument=Battery.SchDoc|FileName=Peripherals.SchDoc|SheetNumber=4
-Record=NoMainPathDocument|SourceDocument=Battery.SchDoc|FileName=Scintillator_Circuit.SchDoc|SheetNumber=3
+Record=TopLevelDocument|FileName=Geiger_Circuit.SchDoc|SheetNumber=6
+Record=NoMainPathDocument|SourceDocument=Geiger_Circuit.SchDoc|FileName=IO_Ports.SchDoc|SheetNumber=2
+Record=NoMainPathDocument|SourceDocument=Geiger_Circuit.SchDoc|FileName=Microcontroller_Unit.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=Geiger_Circuit.SchDoc|FileName=Peripherals.SchDoc|SheetNumber=4
+Record=NoMainPathDocument|SourceDocument=Geiger_Circuit.SchDoc|FileName=Power.SchDoc|SheetNumber=5
+Record=NoMainPathDocument|SourceDocument=Geiger_Circuit.SchDoc|FileName=Scintillator_Circuit.SchDoc|SheetNumber=3
