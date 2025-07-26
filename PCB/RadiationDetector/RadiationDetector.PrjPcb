@@ -118,7 +118,7 @@ GenerateClassCluster=0
 DocumentUniqueId=FFURSXRZ
 
 [Document5]
-DocumentPath=Battery.SchDoc
+DocumentPath=Power.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
