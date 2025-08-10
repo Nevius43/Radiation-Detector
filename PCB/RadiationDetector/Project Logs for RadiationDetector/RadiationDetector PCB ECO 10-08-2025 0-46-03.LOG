@@ -1,0 +1,20 @@
+Change Component Designator: OldDesignator=*1 NewDesignator=Q6
+Add Pin To Net: Unknown Pin: Pin G1-A1B12
+Add Pin To Net: Unknown Pin: Pin G1-A4B9
+Add Pin To Net: Unknown Pin: Pin G1-B1A12
+Add Pin To Net: Unknown Pin: Pin G1-B4A9
+Add Pin To Net: Unknown Pin: Pin G1-S1
+Add Pin To Net: Unknown Pin: Pin G1-S2
+Add Pin To Net: Unknown Pin: Pin G1-S3
+Add Pin To Net: Unknown Pin: Pin G1-S4
+Add Pin To Net: Unknown Pin: Pin G2-A1B12
+Add Pin To Net: Unknown Pin: Pin G2-A4B9
+Add Pin To Net: Unknown Pin: Pin G2-B1A12
+Add Pin To Net: Unknown Pin: Pin G2-B4A9
+Add Pin To Net: Unknown Pin: Pin G2-S1
+Add Pin To Net: Unknown Pin: Pin G2-S2
+Add Pin To Net: Unknown Pin: Pin G2-S3
+Add Pin To Net: Unknown Pin: Pin G2-S4
+Add Pin To Net: Unknown Pin: Pin Q4-4
+Change Net Name : Old Net Name=Net*1_1 New Net Name=NetQ5_3
+Change Net Name : Old Net Name=Net*1_2 New Net Name=NetD13_2
