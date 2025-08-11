@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=HV_FB Pin=ESP32-S3-WROOM-1U-N16R8-38
+Added Pin To Net: NetName=HV_PWM Pin=ESP32-S3-WROOM-1U-N16R8-38
+Change Net Color : Old Net Color=Navy New Net Color=Default
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
+PCB-ECO: Change Pad Pin/Pkg Length: Old=0mm New=0.508mm
