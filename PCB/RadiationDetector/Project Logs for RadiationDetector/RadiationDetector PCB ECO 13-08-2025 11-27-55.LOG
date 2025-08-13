@@ -1,0 +1,26 @@
+Added Component: Designator=TP1(Testpoint)
+Added Component: Designator=TP2(Testpoint)
+Added Component: Designator=TP3(Testpoint)
+Added Component: Designator=TP4(Testpoint)
+Added Component: Designator=TP5(Testpoint)
+Added Component: Designator=TP6(Testpoint)
+Added Component: Designator=TP7(Testpoint)
+Added Component: Designator=TP8(Testpoint)
+Added Component: Designator=TP9(Testpoint)
+Added Component: Designator=TP10(Testpoint)
+Added Component: Designator=TP11(Testpoint)
+Added Component: Designator=TP12(Testpoint)
+Added Component: Designator=TP13(Testpoint)
+Added Pin To Net: NetName=+5V_VBUS1 Pin=TP1-1
+Added Pin To Net: NetName=+5V_VBUS2 Pin=TP2-1
+Added Pin To Net: NetName=Scint_out_Signal Pin=TP3-1
+Added Pin To Net: NetName=Scint_Interrupt Pin=TP4-1
+Added Pin To Net: NetName=SIPM_SIGNAL Pin=TP5-1
+Added Pin To Net: NetName=NetR14_3 Pin=TP6-1
+Added Pin To Net: NetName=+5V Pin=TP7-1
+Added Pin To Net: NetName=V_BAT Pin=TP8-1
+Added Pin To Net: NetName=+3V3 Pin=TP9-1
+Added Pin To Net: NetName=+Vin_Buck Pin=TP10-1
+Added Pin To Net: NetName=HV_FB Pin=TP11-1
+Added Pin To Net: NetName=GEIGER_DETECT_OUTPUT Pin=TP12-1
+Added Pin To Net: NetName=NetC29_1 Pin=TP13-1
