@@ -1,0 +1,35 @@
+Removed Pin From Net: NetName=Bat_sens Pin=ESP32-S3-WROOM-1U-N16R8-6
+Removed Pin From Net: NetName=Screen_Reset Pin=ESP32-S3-WROOM-1U-N16R8-8
+Removed Pin From Net: NetName=Touch_CS Pin=ESP32-S3-WROOM-1U-N16R8-9
+Removed Pin From Net: NetName=SD_CS Pin=ESP32-S3-WROOM-1U-N16R8-10
+Removed Pin From Net: NetName=SD_MISO Pin=ESP32-S3-WROOM-1U-N16R8-11
+Removed Pin From Net: NetName=SD_CLK Pin=ESP32-S3-WROOM-1U-N16R8-17
+Removed Pin From Net: NetName=Screen_CS Pin=ESP32-S3-WROOM-1U-N16R8-18
+Removed Pin From Net: NetName=Screen_MOSI Pin=ESP32-S3-WROOM-1U-N16R8-19
+Removed Pin From Net: NetName=Screen_CLK Pin=ESP32-S3-WROOM-1U-N16R8-20
+Removed Pin From Net: NetName=Screen_MISO Pin=ESP32-S3-WROOM-1U-N16R8-21
+Removed Pin From Net: NetName=Scint_Reset Pin=ESP32-S3-WROOM-1U-N16R8-22
+Removed Pin From Net: NetName=Buzzer_Signal Pin=ESP32-S3-WROOM-1U-N16R8-31
+Removed Pin From Net: NetName=HV_PWM Pin=ESP32-S3-WROOM-1U-N16R8-38
+Removed Pin From Net: NetName=+3V3 Pin=SCREEN1-8
+Added Pin To Net: NetName=SD_CS Pin=ESP32-S3-WROOM-1U-N16R8-6
+Added Pin To Net: NetName=SD_MISO Pin=ESP32-S3-WROOM-1U-N16R8-8
+Added Pin To Net: NetName=SD_CLK Pin=ESP32-S3-WROOM-1U-N16R8-9
+Added Pin To Net: NetName=HV_PWM Pin=ESP32-S3-WROOM-1U-N16R8-10
+Added Pin To Net: NetName=Bat_sens Pin=ESP32-S3-WROOM-1U-N16R8-17
+Added Pin To Net: NetName=Buzzer_Signal Pin=ESP32-S3-WROOM-1U-N16R8-18
+Added Pin To Net: NetName=Touch_CS Pin=ESP32-S3-WROOM-1U-N16R8-19
+Added Pin To Net: NetName=Screen_MISO Pin=ESP32-S3-WROOM-1U-N16R8-20
+Added Pin To Net: NetName=Screen_CLK Pin=ESP32-S3-WROOM-1U-N16R8-21
+Added Pin To Net: NetName=Screen_MOSI Pin=ESP32-S3-WROOM-1U-N16R8-22
+Added Pin To Net: NetName=Screen_Reset Pin=ESP32-S3-WROOM-1U-N16R8-24
+Added Pin To Net: NetName=Screen_CS Pin=ESP32-S3-WROOM-1U-N16R8-25
+Added Pin To Net: NetName=GPIO0 Pin=ESP32-S3-WROOM-1U-N16R8-27
+Added Pin To Net: NetName=Scint_Reset Pin=ESP32-S3-WROOM-1U-N16R8-38
+Added Pin To Net: NetName=Geiger_Detect_Out Pin=C30-4
+Added Pin To Net: NetName=Geiger_Detect_Out Pin=ESP32-S3-WROOM-1U-N16R8-11
+Added Pin To Net: NetName=Geiger_Detect_Out Pin=TP12-1
+Added Net: Name=Geiger_Detect_Out
+Added Pin To Net: NetName=Screen_LED Pin=ESP32-S3-WROOM-1U-N16R8-31
+Added Pin To Net: NetName=Screen_LED Pin=SCREEN1-8
+Added Net: Name=Screen_LED
