@@ -44,6 +44,7 @@ CrossRefPorts=3
 CrossRefCrossSheets=1
 CrossRefSheetEntries=0
 CrossRefFollowFromMainSettings=1
+CurrentVariant=Prototype
 
 [Preferences]
 PrefsVaultGUID=
@@ -235,6 +236,16 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
+
+[ProjectVariant1]
+UniqueId=afac62ab-dedc-49ca-bddd-1fa76b164826
+Description=Prototype
+AllowFabrication=0
+ParameterCount=0
+VariationCount=2
+Variation1=Designator=C2|UniqueId=\ZTLOHDMB|Kind=1|AlternatePart=
+Variation2=Designator=C1|UniqueId=\BOVSRUPY|Kind=1|AlternatePart=
+ParamVariationCount=0
 
 [GeneratedDocument1]
 DocumentPath=Project Outputs for RadiationDetector\Design Rule Check - RadiationDetector.html

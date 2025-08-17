@@ -1,0 +1,22 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: RadiationDetector.PcbDoc   18/08/2025  0:10:48
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : L1 to L4
+ASCII RoundHoles File : RadiationDetector-RoundHoles.TXT
+ASCII SlotHoles File : RadiationDetector-SlotHoles.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      0.305mm (12mil)                                           Round             198       PTH        949.56mm (37.38inch)
+T2      0.6mm (24mil)                                             Slot              8         PTH        82.72mm (3.26inch)
+T3      0.705mm (28mil)                                           Round             2         PTH        3.00mm (0.12inch)
+T4      0.762mm (30mil)                                           Round             18        PTH        145.44mm (5.73inch)
+T5      0.8mm (31mil)                                             Round             2         PTH        2.00mm (0.08inch)
+T6      1mm (39mil)                                               Round             2         PTH        10.00mm (0.39inch)
+T7      1.2mm (47mil)                                             Round             4         PTH        62.00mm (2.44inch)
+T8      1.6mm (63mil)                                             Round             4         PTH        213.00mm (8.39inch)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              238
+
+Total Processing Time (hh:mm:ss) : 00:00:00
