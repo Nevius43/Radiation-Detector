@@ -1,15 +1,15 @@
 Protel Design System Design Rule Check
 PCB File : C:\Users\Nevius\Documents\GitHub\Radiation-Detector\PCB\RadiationDetector\RadiationDetector.PcbDoc
 Date     : 18/08/2025
-Time     : 0:08:57
+Time     : 22:27:54
 
-Processing Rule : Clearance Constraint (Gap=6mil) ((WithinRoom('FTDI') or WithinRoom('OPAMP') or WithinRoom('OPAMP2') or WithinRoom('SmallFootprint') or WithinRoom('USBC1') or WithinRoom('USBC2')) and (Layer = 'L1')),(All)
-Rule Violations :0
-
-Processing Rule : Clearance Constraint (Gap=10mil) (All),(All)
+Processing Rule : Clearance Constraint (Gap=6mil) ((WithinRoom('FTDI') or WithinRoom('OPAMPU4') or WithinRoom('OPAMPU3U2') or WithinRoom('OPAMPU5') or WithinRoom('SmallFootprint') or WithinRoom('USBC1') or WithinRoom('USBC2')) and (Layer = 'L1')),(All)
 Rule Violations :0
 
 Processing Rule : Clearance Constraint (Gap=8mil) (InDifferentialPairClass('DIFF90')),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=10mil) (All),(All)
 Rule Violations :0
 
 Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
@@ -60,22 +60,22 @@ Rule Violations :0
 Processing Rule : Net Antennae (Tolerance=0mil) (All)
 Rule Violations :0
 
-Processing Rule : Room OPAMP2 (Bounding Region = (9303.15mil, 13108.915mil, 9463.779mil, 13397.638mil) (False)
+Processing Rule : Room OPAMPU3U2 (Bounding Region = (9386.988mil, 12202.441mil, 9730.315mil, 12587.441mil) (False)
 Rule Violations :0
 
-Processing Rule : Room OPAMP (Bounding Region = (9303.15mil, 12842.52mil, 9744.094mil, 13035.433mil) (False)
+Processing Rule : Room OPAMPU5 (Bounding Region = (9350.315mil, 12802.441mil, 9800.315mil, 13032.441mil) (False)
 Rule Violations :0
 
-Processing Rule : Room FTDI (Bounding Region = (8342.52mil, 11550.118mil, 8574.803mil, 11779.528mil) (False)
+Processing Rule : Room OPAMPU4 (Bounding Region = (9285.315mil, 13112.325mil, 9467.189mil, 13402.441mil) (False)
 Rule Violations :0
 
-Processing Rule : Room USBC1 (Bounding Region = (7519.685mil, 11283.465mil, 8043.307mil, 11759.843mil) (False)
+Processing Rule : Room FTDI (Bounding Region = (8297.982mil, 11503.889mil, 8641.049mil, 11828.945mil) (False)
 Rule Violations :0
 
-Processing Rule : Room USBC2 (Bounding Region = (7515.748mil, 10795.275mil, 8039.37mil, 11271.654mil) (False)
+Processing Rule : Room USBC2 (Bounding Region = (7537.91mil, 10745.674mil, 7954.352mil, 11259.698mil) (False)
 Rule Violations :0
 
-Processing Rule : Room SmallFootprint (Bounding Region = (9401.575mil, 12200.787mil, 9728.346mil, 12574.803mil) (False)
+Processing Rule : Room USBC1 (Bounding Region = (7536.535mil, 11309.177mil, 7951.603mil, 11757.23mil) (False)
 Rule Violations :0
 
 Processing Rule : Component Clearance Constraint ( Horizontal Gap = -1mil, Vertical Gap = -1mil ) (InComponent('SCREEN1')),(InComponent('U4')) 
