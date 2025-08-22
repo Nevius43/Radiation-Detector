@@ -72,7 +72,7 @@ static const uint16_t SCREEN_HEIGHT = 320;
 static const uint8_t GEIGER_PULSE_PIN = 9;   ///< GPIO pin connected to the Geiger counter output
 static const uint8_t BUZZER_PIN       = 38;    ///< GPIO pin for LEDC buzzer output
 
-static const float CONVERSION_FACTOR = 1641.0f; ///< Factor to convert CPM to µSv/h
+static const float CONVERSION_FACTOR = 150.0f; ///< Factor to convert CPM to µSv/h
 
 // Chart settings:
 // Chart1: 20 segments, each representing a 3-minute average (1 hour total)

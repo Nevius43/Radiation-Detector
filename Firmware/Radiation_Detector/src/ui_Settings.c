@@ -113,13 +113,6 @@ void ui_Settings_screen_init(void)
     lv_obj_set_align(ui_Label16, LV_ALIGN_BOTTOM_LEFT);
     lv_label_set_text(ui_Label16, "Cumulative Alarm");
 
-    ui_Keyboard = lv_keyboard_create(ui_Settings);
-    lv_obj_set_width(ui_Keyboard, 480);
-    lv_obj_set_height(ui_Keyboard, 130);
-    lv_obj_set_x(ui_Keyboard, 0);
-    lv_obj_set_y(ui_Keyboard, 140);
-    lv_obj_set_align(ui_Keyboard, LV_ALIGN_BOTTOM_MID);
-
     ui_Panel12 = lv_obj_create(ui_Settings);
     lv_obj_set_width(ui_Panel12, 247);
     lv_obj_set_height(ui_Panel12, 43);
@@ -150,7 +143,7 @@ void ui_Settings_screen_init(void)
     lv_obj_set_width(ui_PASSWORD, 150);
     lv_obj_set_height(ui_PASSWORD, 43);
     lv_obj_set_x(ui_PASSWORD, 0);
-    lv_obj_set_y(ui_PASSWORD, 20);
+    lv_obj_set_y(ui_PASSWORD, 19);
     lv_obj_set_align(ui_PASSWORD, LV_ALIGN_LEFT_MID);
     lv_textarea_set_placeholder_text(ui_PASSWORD, "Password");
     lv_textarea_set_password_mode(ui_PASSWORD, true);
@@ -306,10 +299,16 @@ void ui_Settings_screen_init(void)
     lv_obj_set_align(ui_EnableAlarmsCheckbox, LV_ALIGN_RIGHT_MID);
     lv_obj_add_flag(ui_EnableAlarmsCheckbox, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
+    ui_Keyboard = lv_keyboard_create(ui_Settings);
+    lv_obj_set_width(ui_Keyboard, 480);
+    lv_obj_set_height(ui_Keyboard, 130);
+    lv_obj_set_x(ui_Keyboard, 0);
+    lv_obj_set_y(ui_Keyboard, 140);
+    lv_obj_set_align(ui_Keyboard, LV_ALIGN_BOTTOM_MID);
+
     lv_obj_add_event_cb(ui_Button16, ui_event_Button16, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button17, ui_event_Button17, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button18, ui_event_Button18, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Keyboard, ui_event_Keyboard, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PASSWORD, ui_event_PASSWORD, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SSID, ui_event_SSID, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Container10, ui_event_Container10, LV_EVENT_ALL, NULL);
@@ -317,5 +316,6 @@ void ui_Settings_screen_init(void)
     lv_obj_add_event_cb(ui_DecCurrent, ui_event_DecCurrent, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_DecCumulative, ui_event_DecCumulative, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IncCumulative, ui_event_IncCumulative, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Keyboard, ui_event_Keyboard, LV_EVENT_ALL, NULL);
 
 }

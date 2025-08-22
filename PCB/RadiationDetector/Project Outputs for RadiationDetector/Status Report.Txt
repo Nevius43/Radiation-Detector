@@ -1,14 +1,13 @@
-Project Outputs Generation Report
----------------------------------
-Start Output Generation At 0:26:11 On 18/08/2025
+Output: Drill Drawing/Guides
+Type  : NC Drill
+From  : PCB Document [RadiationDetector.PcbDoc]
+   Generated File[RadiationDetector-RoundHoles.TXT]
+   Generated File[RadiationDetector-SlotHoles.TXT]
+   Generated File[RadiationDetector.LDP]
+   Generated File[RadiationDetector.DRR]
 
-Output: Bill of Materials
-Type  : BOM
-From  : Variant [Prototype] of Project [RadiationDetector.PrjPcb]
-   Generated File[Bill of Materials-RadiationDetector(Prototype).xlsx]
 
-
-Files Generated   : 1
+Files Generated   : 4
 Documents Printed : 0
 
-Finished Output Generation At 0:26:14 On 18/08/2025
+Finished Output Generation At 21:43:17 On 19/08/2025

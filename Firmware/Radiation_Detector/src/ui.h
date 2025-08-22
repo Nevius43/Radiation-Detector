@@ -147,8 +147,6 @@ extern lv_obj_t * ui_Panel11;
 extern lv_obj_t * ui_Label14;
 extern lv_obj_t * ui_Label15;
 extern lv_obj_t * ui_Label16;
-void ui_event_Keyboard(lv_event_t * e);
-extern lv_obj_t * ui_Keyboard;
 extern lv_obj_t * ui_Panel12;
 extern lv_obj_t * ui_WIFIINFO;
 void ui_event_Container10(lv_event_t * e);
@@ -177,6 +175,8 @@ void ui_event_IncCumulative(lv_event_t * e);
 extern lv_obj_t * ui_IncCumulative;
 extern lv_obj_t * ui_Label28;
 extern lv_obj_t * ui_EnableAlarmsCheckbox;
+void ui_event_Keyboard(lv_event_t * e);
+extern lv_obj_t * ui_Keyboard;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Charts24h

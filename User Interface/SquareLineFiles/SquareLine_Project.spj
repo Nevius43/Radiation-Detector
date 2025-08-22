@@ -13489,7 +13489,8 @@
                     "InheritedType": 4
                   }
                 ],
-                "saved_objtypeKey": "BUTTON"
+                "saved_objtypeKey": "BUTTON",
+                "tree_closed": true
               },
               {
                 "guid": "GUID89579960-180251S5643350",
@@ -14601,216 +14602,6 @@
             "saved_objtypeKey": "LABEL"
           },
           {
-            "guid": "GUID83184772-710005S136173350",
-            "deepid": 1273729914,
-            "dont_export": false,
-            "locked": false,
-            "properties": [
-              {
-                "nid": 10,
-                "strtype": "OBJECT/Name",
-                "strval": "Keyboard",
-                "InheritedType": 10
-              },
-              {
-                "nid": 20,
-                "strtype": "OBJECT/Layout",
-                "InheritedType": 1
-              },
-              {
-                "Flow": 0,
-                "Wrap": false,
-                "Reversed": false,
-                "MainAlignment": 0,
-                "CrossAlignment": 0,
-                "TrackAlignment": 0,
-                "LayoutType": 0,
-                "nid": 30,
-                "strtype": "OBJECT/Layout_type",
-                "strval": "No_layout",
-                "InheritedType": 13
-              },
-              {
-                "nid": 40,
-                "strtype": "OBJECT/Transform",
-                "InheritedType": 1
-              },
-              {
-                "nid": 50,
-                "flags": 17,
-                "strtype": "OBJECT/Position",
-                "intarray": [
-                  0,
-                  140
-                ],
-                "InheritedType": 7
-              },
-              {
-                "nid": 60,
-                "flags": 17,
-                "strtype": "OBJECT/Size",
-                "intarray": [
-                  480,
-                  130
-                ],
-                "InheritedType": 7
-              },
-              {
-                "nid": 70,
-                "strtype": "OBJECT/Align",
-                "strval": "BOTTOM_MID",
-                "InheritedType": 3
-              },
-              {
-                "nid": 90,
-                "flags": 1048576,
-                "strtype": "OBJECT/Flags",
-                "InheritedType": 1
-              },
-              {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
-                "nid": 300,
-                "strtype": "OBJECT/Scrollbar_mode",
-                "strval": "AUTO",
-                "InheritedType": 3
-              },
-              {
-                "nid": 310,
-                "strtype": "OBJECT/Scroll_direction",
-                "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 320,
-                "flags": 1048576,
-                "strtype": "OBJECT/States",
-                "InheritedType": 1
-              },
-              {
-                "part": "lv.PART.MAIN",
-                "childs": [],
-                "nid": 1010,
-                "strtype": "KEYBOARD/Style_main",
-                "strval": "lv.PART.MAIN, Rectangle, Pad, Transform",
-                "InheritedType": 11
-              },
-              {
-                "nid": 1020,
-                "strtype": "KEYBOARD/Target_textarea",
-                "strval": "-",
-                "InheritedType": 9
-              },
-              {
-                "nid": 1030,
-                "strtype": "KEYBOARD/Mode",
-                "strval": "TEXT_LOWER",
-                "InheritedType": 3
-              },
-              {
-                "part": "lv.PART.ITEMS",
-                "childs": [],
-                "nid": 1040,
-                "strtype": "KEYBOARD/Style_items",
-                "strval": "lv.PART.ITEMS, Rectangle, Pad, Text",
-                "InheritedType": 11
-              },
-              {
-                "disabled": false,
-                "nid": 1000859,
-                "strtype": "_event/EventHandler",
-                "strval": "GESTURE_DOWN(GESTURE)",
-                "childs": [
-                  {
-                    "nid": 1000860,
-                    "strtype": "_event/name",
-                    "strval": "HideKeyboard",
-                    "InheritedType": 10
-                  },
-                  {
-                    "nid": 1000861,
-                    "strtype": "_event/condition_C",
-                    "strval": "",
-                    "InheritedType": 10
-                  },
-                  {
-                    "nid": 1000862,
-                    "strtype": "_event/condition_P",
-                    "strval": "",
-                    "InheritedType": 10
-                  },
-                  {
-                    "nid": 1000863,
-                    "strtype": "_event/action",
-                    "strval": "PLAY ANIMATION",
-                    "childs": [
-                      {
-                        "nid": 1000864,
-                        "strtype": "PLAY ANIMATION/Name",
-                        "strval": "PLAY ANIMATION",
-                        "InheritedType": 10
-                      },
-                      {
-                        "nid": 1000865,
-                        "strtype": "PLAY ANIMATION/FunctionName",
-                        "strval": "KeyboardHide_Animation",
-                        "InheritedType": 10
-                      },
-                      {
-                        "nid": 1000866,
-                        "strtype": "PLAY ANIMATION/Animation",
-                        "strval": "KeyboardHide",
-                        "InheritedType": 8
-                      },
-                      {
-                        "nid": 1000867,
-                        "strtype": "PLAY ANIMATION/Target",
-                        "strval": "GUID83184772-710005S136173350",
-                        "InheritedType": 9
-                      },
-                      {
-                        "nid": 1000868,
-                        "strtype": "PLAY ANIMATION/Delay",
-                        "InheritedType": 6
-                      },
-                      {
-                        "nid": 1000869,
-                        "strtype": "PLAY ANIMATION/Call",
-                        "strval": "<{FunctionName}>(<{Target}>, <{Delay}>)",
-                        "InheritedType": 10
-                      },
-                      {
-                        "nid": 1000870,
-                        "strtype": "PLAY ANIMATION/CallC",
-                        "strval": "<{FunctionName}>(<{Target}>, <{Delay}>);",
-                        "InheritedType": 10
-                      }
-                    ],
-                    "InheritedType": 10
-                  }
-                ],
-                "InheritedType": 4
-              }
-            ],
-            "saved_objtypeKey": "KEYBOARD"
-          },
-          {
             "guid": "GUID35927407-684024S156441",
             "deepid": 1847630729,
             "children": [
@@ -15148,7 +14939,7 @@
                     "strtype": "OBJECT/Position",
                     "intarray": [
                       0,
-                      20
+                      19
                     ],
                     "InheritedType": 7
                   },
@@ -15636,6 +15427,71 @@
                             "strtype": "PLAY ANIMATION/CallC",
                             "strval": "<{FunctionName}>(<{Target}>, <{Delay}>);",
                             "InheritedType": 10
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1000911,
+                    "strtype": "_event/EventHandler",
+                    "strval": "CLICKED",
+                    "childs": [
+                      {
+                        "nid": 1000912,
+                        "strtype": "_event/name",
+                        "strval": "SSIDTarget",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000913,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000914,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000915,
+                        "strtype": "_event/action",
+                        "strval": "KEYBOARD SET TARGET",
+                        "childs": [
+                          {
+                            "nid": 1000916,
+                            "strtype": "KEYBOARD SET TARGET/Name",
+                            "strval": "KEYBOARD SET TARGET",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000917,
+                            "strtype": "KEYBOARD SET TARGET/Call",
+                            "strval": "KeyboardSetTarget( <{Keyboard}>,  <{TextArea}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000918,
+                            "strtype": "KEYBOARD SET TARGET/CallC",
+                            "strval": "_ui_keyboard_set_target(<{Keyboard}>,  <{TextArea}>);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000919,
+                            "strtype": "KEYBOARD SET TARGET/Keyboard",
+                            "strval": "GUID83184772-710005S136173350",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1000920,
+                            "strtype": "KEYBOARD SET TARGET/TextArea",
+                            "strval": "GUID77376296-710007S488353350",
+                            "InheritedType": 9
                           }
                         ],
                         "InheritedType": 10
@@ -18403,6 +18259,217 @@
               }
             ],
             "saved_objtypeKey": "CHECKBOX"
+          },
+          {
+            "guid": "GUID83184772-710005S136173350",
+            "deepid": 1273729914,
+            "dont_export": false,
+            "locked": false,
+            "properties": [
+              {
+                "nid": 10,
+                "strtype": "OBJECT/Name",
+                "strval": "Keyboard",
+                "InheritedType": 10
+              },
+              {
+                "nid": 20,
+                "strtype": "OBJECT/Layout",
+                "InheritedType": 1
+              },
+              {
+                "Flow": 0,
+                "Wrap": false,
+                "Reversed": false,
+                "MainAlignment": 0,
+                "CrossAlignment": 0,
+                "TrackAlignment": 0,
+                "LayoutType": 0,
+                "nid": 30,
+                "strtype": "OBJECT/Layout_type",
+                "strval": "No_layout",
+                "InheritedType": 13
+              },
+              {
+                "nid": 40,
+                "strtype": "OBJECT/Transform",
+                "InheritedType": 1
+              },
+              {
+                "nid": 50,
+                "flags": 17,
+                "strtype": "OBJECT/Position",
+                "intarray": [
+                  0,
+                  140
+                ],
+                "InheritedType": 7
+              },
+              {
+                "nid": 60,
+                "flags": 17,
+                "strtype": "OBJECT/Size",
+                "intarray": [
+                  480,
+                  130
+                ],
+                "InheritedType": 7
+              },
+              {
+                "nid": 70,
+                "strtype": "OBJECT/Align",
+                "strval": "BOTTOM_MID",
+                "InheritedType": 3
+              },
+              {
+                "nid": 90,
+                "flags": 1048576,
+                "strtype": "OBJECT/Flags",
+                "InheritedType": 1
+              },
+              {
+                "nid": 225,
+                "flags": 1048576,
+                "strtype": "OBJECT/Scrolling",
+                "InheritedType": 1
+              },
+              {
+                "nid": 300,
+                "strtype": "OBJECT/Scrollbar_mode",
+                "strval": "AUTO",
+                "InheritedType": 3
+              },
+              {
+                "nid": 310,
+                "strtype": "OBJECT/Scroll_direction",
+                "strval": "ALL",
+                "InheritedType": 3
+              },
+              {
+                "nid": 314,
+                "strtype": "OBJECT/Scroll_snap_x",
+                "strval": "NONE",
+                "InheritedType": 3
+              },
+              {
+                "nid": 315,
+                "strtype": "OBJECT/Scroll_snap_y",
+                "strval": "NONE",
+                "InheritedType": 3
+              },
+              {
+                "nid": 320,
+                "flags": 1048576,
+                "strtype": "OBJECT/States",
+                "InheritedType": 1
+              },
+              {
+                "part": "lv.PART.MAIN",
+                "childs": [],
+                "nid": 1010,
+                "strtype": "KEYBOARD/Style_main",
+                "strval": "lv.PART.MAIN, Rectangle, Pad, Transform",
+                "InheritedType": 11
+              },
+              {
+                "nid": 1020,
+                "strtype": "KEYBOARD/Target_textarea",
+                "strval": "-",
+                "InheritedType": 9
+              },
+              {
+                "nid": 1030,
+                "strtype": "KEYBOARD/Mode",
+                "strval": "TEXT_LOWER",
+                "InheritedType": 3
+              },
+              {
+                "part": "lv.PART.ITEMS",
+                "childs": [],
+                "nid": 1040,
+                "strtype": "KEYBOARD/Style_items",
+                "strval": "lv.PART.ITEMS, Rectangle, Pad, Text",
+                "InheritedType": 11
+              },
+              {
+                "disabled": false,
+                "nid": 1000859,
+                "strtype": "_event/EventHandler",
+                "strval": "GESTURE_DOWN(GESTURE)",
+                "childs": [
+                  {
+                    "nid": 1000860,
+                    "strtype": "_event/name",
+                    "strval": "HideKeyboard",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000861,
+                    "strtype": "_event/condition_C",
+                    "strval": "",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000862,
+                    "strtype": "_event/condition_P",
+                    "strval": "",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000863,
+                    "strtype": "_event/action",
+                    "strval": "PLAY ANIMATION",
+                    "childs": [
+                      {
+                        "nid": 1000864,
+                        "strtype": "PLAY ANIMATION/Name",
+                        "strval": "PLAY ANIMATION",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000865,
+                        "strtype": "PLAY ANIMATION/FunctionName",
+                        "strval": "KeyboardHide_Animation",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000866,
+                        "strtype": "PLAY ANIMATION/Animation",
+                        "strval": "KeyboardHide",
+                        "InheritedType": 8
+                      },
+                      {
+                        "nid": 1000867,
+                        "strtype": "PLAY ANIMATION/Target",
+                        "strval": "GUID83184772-710005S136173350",
+                        "InheritedType": 9
+                      },
+                      {
+                        "nid": 1000868,
+                        "strtype": "PLAY ANIMATION/Delay",
+                        "InheritedType": 6
+                      },
+                      {
+                        "nid": 1000869,
+                        "strtype": "PLAY ANIMATION/Call",
+                        "strval": "<{FunctionName}>(<{Target}>, <{Delay}>)",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000870,
+                        "strtype": "PLAY ANIMATION/CallC",
+                        "strval": "<{FunctionName}>(<{Target}>, <{Delay}>);",
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 10
+                  }
+                ],
+                "InheritedType": 4
+              }
+            ],
+            "saved_objtypeKey": "KEYBOARD",
+            "tree_closed": true
           }
         ],
         "isPage": true,
@@ -24795,7 +24862,7 @@
     "drive_fatfs_path": null,
     "naming": "Name",
     "naming_force_lowercase": false,
-    "nidcnt": 1000911,
+    "nidcnt": 1000921,
     "BitDepth": 16,
     "Name": "SquareLine_Project"
   }

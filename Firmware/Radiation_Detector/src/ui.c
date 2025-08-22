@@ -129,8 +129,6 @@ lv_obj_t * ui_Panel11;
 lv_obj_t * ui_Label14;
 lv_obj_t * ui_Label15;
 lv_obj_t * ui_Label16;
-void ui_event_Keyboard(lv_event_t * e);
-lv_obj_t * ui_Keyboard;
 lv_obj_t * ui_Panel12;
 lv_obj_t * ui_WIFIINFO;
 void ui_event_Container10(lv_event_t * e);
@@ -159,6 +157,8 @@ void ui_event_IncCumulative(lv_event_t * e);
 lv_obj_t * ui_IncCumulative;
 lv_obj_t * ui_Label28;
 lv_obj_t * ui_EnableAlarmsCheckbox;
+void ui_event_Keyboard(lv_event_t * e);
+lv_obj_t * ui_Keyboard;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Charts24h
@@ -410,16 +410,6 @@ void ui_event_Button18(lv_event_t * e)
     }
 }
 
-void ui_event_Keyboard(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM) {
-        lv_indev_wait_release(lv_indev_get_act());
-        KeyboardHide_Animation(ui_Keyboard, 0);
-    }
-}
-
 void ui_event_Container10(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -444,6 +434,9 @@ void ui_event_SSID(lv_event_t * e)
 
     if(event_code == LV_EVENT_FOCUSED) {
         KeyboardPopup_Animation(ui_Keyboard, 0);
+    }
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_keyboard_set_target(ui_Keyboard,  ui_SSID);
     }
 }
 
@@ -480,6 +473,16 @@ void ui_event_IncCumulative(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_spinbox_step(ui_CumulativeSpinbox, 1);
+    }
+}
+
+void ui_event_Keyboard(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM) {
+        lv_indev_wait_release(lv_indev_get_act());
+        KeyboardHide_Animation(ui_Keyboard, 0);
     }
 }
 
