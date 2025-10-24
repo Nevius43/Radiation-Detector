@@ -70,9 +70,9 @@ static const uint16_t SCREEN_WIDTH  = 480;
 static const uint16_t SCREEN_HEIGHT = 320;
 
 static const uint8_t GEIGER_PULSE_PIN = 9;   ///< GPIO pin connected to the Geiger counter output
-static const uint8_t BUZZER_PIN       = 38;    ///< GPIO pin for LEDC buzzer output
+static const uint8_t BUZZER_PIN       = 10;    ///< GPIO pin for LEDC buzzer output
 
-static const float CONVERSION_FACTOR = 1.0f; ///< Factor to convert CPM to µSv/h
+static const float CONVERSION_FACTOR = 154.0f; ///< Factor to convert CPM to µSv/h
 
 // Chart settings:
 // Chart1: 20 segments, each representing a 3-minute average (1 hour total)
@@ -1148,7 +1148,8 @@ void uiTask(void *parameter) {
  ******************************************************************************/ 
 void setup() {
     initSerial();
-    
+    pinMode(38, OUTPUT);
+    digitalWrite(38, HIGH);
     // Print startup debug information
     Serial.println("\n\n=== Radiation Detector Startup ===");
     Serial.println("Debug output is enabled");
@@ -1226,6 +1227,9 @@ void setup() {
     // Start WiFi timer if auto-connect is enabled
     if (onStartup) {
         DEBUG_PRINTLN("Auto-connect enabled, starting WiFi timer");
+        lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
+    } else {
+        DEBUG_PRINTLN("Auto-connect disabled, starting fallback timer");
         lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
     }
 

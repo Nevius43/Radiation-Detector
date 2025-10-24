@@ -380,7 +380,7 @@
 // supported. When commented out the code size will be smaller and sketches will
 // run slightly faster, so leave it commented out unless you need it!
 
-// Transaction support is needed to work with SD library but not needed with TFT_SdFat
+// Transaction support is needed to work with SD library but not needed `with TFT_SdFat
 // Transaction support is required if other SPI devices are connected.
 
 // Transactions are automatically enabled by the library for an ESP32 (to use HAL mutex)
