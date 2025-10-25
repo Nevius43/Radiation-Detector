@@ -1194,11 +1194,9 @@ void setup() {
     // Force LVGL to process UI changes
     lv_timer_handler();
 
-    // Start WiFi timer if auto-connect is enabled
-    if (onStartup) {
-        DEBUG_PRINTLN("Auto-connect enabled, starting WiFi timer");
-        lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
-    }
+    // Always start WiFi timer to handle both auto-connect and manual startup
+    DEBUG_PRINTF("Starting WiFi timer (onStartup=%s)\n", onStartup ? "enabled" : "disabled");
+    lv_timer_create(wifi_connect_timer_cb, 2000, NULL);
 
     startTime = millis();
     lastLoop = startTime;
